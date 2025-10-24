@@ -8,13 +8,5 @@ NextJS Learn - https://nextjs.org/learn/dashboard-app
 TypeScript w/React - https://react.dev/learn/typescript  
 AuthJS - https://authjs.dev/getting-started/installation  
 TailwindCSS - https://btech.instructure.com/courses/592429/pages/module-overview-tailwindcss?module_item_id=10714170  
-PHP - https://dev.to/emmykolic/how-to-use-php-as-a-backend-using-react-for-frontend-3dca
-
--   How to use PHP with React?  
-    To use PHP with React, create PHP scripts that handle server-side logic and data operations.  
-    Use React’s Axios or Fetch API to send HTTP requests to these PHP scripts,  
-    passing data and receiving responses for dynamic content integration in your web applications.
-
-### Fix assignment before moving on from this project
-
-https://btech.instructure.com/courses/610446/assignments/6975630/submissions/2133970
+Vercel - https://vercel.com/platylazas-projects/frontend-framework-portfolio
+Neon DB - https://console.neon.tech/app/projects/lively-recipe-44190393/branches/br-dawn-boat-ahioiojl/tables
