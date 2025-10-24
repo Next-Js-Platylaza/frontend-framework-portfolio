@@ -1,0 +1,9 @@
+https://btech.instructure.com/courses/610446/assignments/6976220?module_item_id=12178397    
+
+http://localhost:3000/php   
+
+https://stackoverflow.com/questions/44910180/app-script-sends-405-response-when-trying-to-send-a-post-request
+
+https://www.google.com/search?q=how+to+use+axios+for+php+with+react+nextjs+typescript&rlz=1C1JSBI_enUS1076&sourceid=chrome&ie=UTF-8
+
+https://stackoverflow.com/questions/49306215/use-reactjs-and-axios-to-give-data-to-api-in-php
