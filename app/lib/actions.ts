@@ -1,3 +1,4 @@
+"use server"
 import { signIn } from "@/auth";
 import { AuthError } from "next-auth";
 import { z } from "zod";
@@ -27,55 +28,57 @@ export async function authenticate(
 }
 
 const FormSchema = z.object({
-	id: z.string(),
-	amount: z.coerce
-		.number()
-		.gt(0, { message: "Please enter an amount greater than $0." }),
-	date: z.string(),
+	name: z.string(),
+	email: z.string(),
+	password: z.string(),
 });
 
-const CreateInvoice = FormSchema.omit({ id: true, date: true });
+const CreateUser = FormSchema.omit({ name: true, email: true, password: true });
 
 export type State = {
 	errors?: {
-		amount?: string[];
+		name?: string[];
+		email?: string[];
+		password?: string[];
 	};
 	message?: string | null;
 };
 
-export async function createInvoice(prevState: State, formData: FormData) {
+export async function createUser(prevState: State | undefined, formData: FormData) {
 	// Validate form using Zod
-	const validatedFields = CreateInvoice.safeParse({
-		amount: formData.get("amount"),
+	const validatedFields = CreateUser.safeParse({
+		name: formData.get("name"),
+		email: formData.get("email"),
+		password: formData.get("password"),
 	});
 
 	// If form validation fails, return errors early. Otherwise, continue.
 	if (!validatedFields.success) {
 		return {
 			errors: validatedFields.error.flatten().fieldErrors,
-			message: "Missing Fields. Failed to Create Invoice.",
+			message: "Missing Fields. Failed to Create User.",
 		};
 	}
 
 	// Prepare data for insertion into the database
-	const { amount } = validatedFields.data;
-	const amountInCents = amount * 100;
-	const date = new Date().toISOString().split("T")[0];
+	const uuidgenerator = await fetch("https://www.uuidgenerator.net/api/version4");
+	const id = uuidgenerator.text();
+	const { name, email, password } = validatedFields.data;
 
 	// Insert data into the database
 	try {
 		await sql`
-		INSERT INTO invoices (amount, date)
-		VALUES (${amountInCents}, ${date})
+		INSERT INTO users (name, email, password)
+		VALUES (${name}, ${email}, ${password})
 	  `;
 	} catch (error) {
 		// If a database error occurs, return a more specific error.
 		return {
-			message: "Database Error: Failed to Create Invoice.",
+			message: "Database Error: Failed to Create User.",
 		};
 	}
 
-	// Revalidate the cache for the invoices page and redirect the user.
-	revalidatePath("/dashboard/invoices");
-	redirect("/dashboard/invoices");
+	// Revalidate the cache for the users page and redirect the user.
+	revalidatePath("/");
+	redirect("/");
 }
