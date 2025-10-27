@@ -10,7 +10,7 @@ import postgres from "postgres";
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
 export async function authenticate(
-	prevState: string | undefined,
+	prevState: FormState | undefined,
 	formData: FormData,
 ) {
 	try {
@@ -19,9 +19,17 @@ export async function authenticate(
 		if (error instanceof AuthError) {
 			switch (error.type) {
 				case "CredentialsSignin":
-					return `Invalid credentials. ${formData.get("email")}, ${formData.get("password")}`;
+					return {
+						fields: formData,
+						errors: undefined,
+						message: `Invalid credentials. ${formData.get("email")}, ${formData.get("password")}`,
+					};
 				default:
-					return "Something went wrong.";
+					return {
+						fields: formData,
+						errors: undefined,
+						message: "Something went wrong.",
+					};
 			}
 		}
 		throw error;
@@ -47,7 +55,7 @@ const FormSchema = z.object({
 
 const CreateUser = FormSchema.omit({ id: true });
 
-export type State = {
+export type FormState = {
 	fields: FormData,
 	errors?: {
 		name?: string[];
@@ -57,7 +65,7 @@ export type State = {
 	message?: string | null;
 };
 
-export async function createUser(prevState: State | undefined, formData: FormData) {
+export async function createUser(prevState: FormState | undefined, formData: FormData) {
 	// Validate form using Zod
 	const validatedFields = CreateUser.safeParse({
 		name: formData.get("name"),

@@ -1,18 +1,22 @@
 "use client";
 
-import { useActionState } from "react";
-import { authenticate } from "@/app/lib/actions";
-import { useSearchParams } from "next/navigation";
+import { useActionState, useState } from "react";
+import { authenticate, FormState } from "@/app/lib/actions";
 
 export default function LoginForm() {
-	const searchParams = useSearchParams();
-	const callbackUrl = searchParams.get("callbackUrl") || "/";
+	const initialFormData = new FormData();
+	initialFormData.set("email", "");
+	initialFormData.set("password", "");
+	
+	const callbackUrl =  "/";
 
-	const [errorMessage, formAction, isPending] = useActionState(
+	const initialState : FormState = { fields: initialFormData, message: null};
+	const [state, formAction, isPending] = useActionState(
 		authenticate,
-		undefined,
+		initialState,
 	);
-
+	
+	const [passwordIsVisible, setPasswordIsVisible] = useState(false);
 	return (
 		<form action={formAction} className="space-y-3">
 			<div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
@@ -34,6 +38,7 @@ export default function LoginForm() {
 								type="text"
 								name="email"
 								placeholder="Enter your username or email address"
+								defaultValue={state?.fields.get("email") as string}
 								required
 							/>
 						</div>
@@ -49,17 +54,37 @@ export default function LoginForm() {
 							<input
 								className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
 								id="password"
-								type="password"
+								type={passwordIsVisible ? "text" : "password"}
 								name="password"
 								placeholder="Enter password"
+								defaultValue={state?.fields.get("password") as string}
 								required
 								minLength={6}
+								onBlur={()=>{
+                                	setPasswordIsVisible(false);
+                            	}}
 							/>
 						</div>
+						{/* Show/Hide Password Button*/}
+                        <button 
+                            type="button"
+                            onClick={()=>{
+                                setPasswordIsVisible((b) => !b);
+                            }}
+                            className="flex h-10 ml-5 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
+                            >
+                            {passwordIsVisible ? "Hide Password" : "Show Password"}
+                        </button>
 					</div>
 				</div>
 				<input type="hidden" name="redirectTo" value={callbackUrl} />
-				<button className="mt-4 w-full" aria-disabled={isPending}>
+				<button
+					className="mt-4 w-full h-10 ml-5 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
+					aria-disabled={isPending}
+					 onClick={()=>{
+                                setPasswordIsVisible(false);
+                            }}
+					>
 					Log in{" "}
 				</button>
 				<div
@@ -67,10 +92,10 @@ export default function LoginForm() {
 					aria-live="polite"
 					aria-atomic="true"
 				>
-					{errorMessage && (
+					{state?.message && (
 						<>
 							<p className="text-sm text-red-500">
-								{errorMessage}
+								{state.message}
 							</p>
 						</>
 					)}

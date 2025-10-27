@@ -1,15 +1,15 @@
 "use client";
 import Link from "next/link";
-import { createUser, State } from "@/app/lib/actions";
+import { createUser, FormState } from "@/app/lib/actions";
 import { useActionState, useState } from "react";
 
 export default function CreateAccountForm() {
-    const baseFormData = new FormData();
-    baseFormData.set("name", "");
-    baseFormData.set("email", "");
-    baseFormData.set("password", "");
+    const initialFormData = new FormData();
+    initialFormData.set("name", "");
+    initialFormData.set("email", "");
+    initialFormData.set("password", "");
 
-	const initialState: State = { fields: baseFormData, message: null, errors: {} };
+	const initialState: FormState = { fields: initialFormData, message: null, errors: {} };
 	const [state, formAction] = useActionState(createUser, initialState);
 
     const [passwordIsVisible, setPasswordIsVisible] = useState(false);
@@ -104,6 +104,7 @@ export default function CreateAccountForm() {
 					    	className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
 					    	aria-describedby="password-error"
 					    />
+						{/* Show/Hide Password Button*/}
                         <button 
                             type="button"
                             onClick={()=>{
