@@ -7,22 +7,20 @@ export default function LoginForm() {
 	const initialFormData = new FormData();
 	initialFormData.set("email", "");
 	initialFormData.set("password", "");
-	
-	const callbackUrl =  "/";
 
-	const initialState : FormState = { fields: initialFormData, message: null};
+	const callbackUrl = "/recipes";
+
+	const initialState: FormState = { fields: initialFormData, message: null };
 	const [state, formAction, isPending] = useActionState(
 		authenticate,
 		initialState,
 	);
-	
+
 	const [passwordIsVisible, setPasswordIsVisible] = useState(false);
 	return (
 		<form action={formAction} className="space-y-3">
 			<div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
-				<h1 className={"mb-3 text-2xl"}>
-					Please log in to continue.
-				</h1>
+				<h1 className={"mb-3 text-2xl"}>Please log in to continue.</h1>
 				<div className="w-full">
 					<div>
 						<label
@@ -38,7 +36,9 @@ export default function LoginForm() {
 								type="text"
 								name="email"
 								placeholder="Enter your username or email address"
-								defaultValue={state?.fields.get("email") as string}
+								defaultValue={
+									state?.fields.get("email") as string
+								}
 								required
 							/>
 						</div>
@@ -57,34 +57,38 @@ export default function LoginForm() {
 								type={passwordIsVisible ? "text" : "password"}
 								name="password"
 								placeholder="Enter password"
-								defaultValue={state?.fields.get("password") as string}
+								defaultValue={
+									state?.fields.get("password") as string
+								}
 								required
 								minLength={6}
-								onBlur={()=>{
-                                	setPasswordIsVisible(false);
-                            	}}
+								onBlur={() => {
+									setPasswordIsVisible(false);
+								}}
 							/>
 						</div>
 						{/* Show/Hide Password Button*/}
-                        <button 
-                            type="button"
-                            onClick={()=>{
-                                setPasswordIsVisible((b) => !b);
-                            }}
-                            className="flex h-10 ml-5 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
-                            >
-                            {passwordIsVisible ? "Hide Password" : "Show Password"}
-                        </button>
+						<button
+							type="button"
+							onClick={() => {
+								setPasswordIsVisible((b) => !b);
+							}}
+							className="flex h-10 ml-5 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
+						>
+							{passwordIsVisible
+								? "Hide Password"
+								: "Show Password"}
+						</button>
 					</div>
 				</div>
 				<input type="hidden" name="redirectTo" value={callbackUrl} />
 				<button
 					className="mt-4 w-full h-10 ml-5 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
 					aria-disabled={isPending}
-					 onClick={()=>{
-                                setPasswordIsVisible(false);
-                            }}
-					>
+					onClick={() => {
+						setPasswordIsVisible(false);
+					}}
+				>
 					Log in{" "}
 				</button>
 				<div

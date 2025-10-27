@@ -1,8 +1,11 @@
-import { User } from "./lib/definitions";
+import { Metadata } from "next";
 import { fetchUsers } from "./lib/data";
 
-export default async function Home() {
+export const metadata: Metadata = {
+	title: "Home Page",
+};
 
+export default async function Home() {
 	const users = await fetchUsers();
 	const user = users[0];
 

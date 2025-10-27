@@ -11,9 +11,10 @@ export const authConfig = {
 			const loginIsRequired = nextUrl.pathname.startsWith("/recipes");
 			if (loginIsRequired) {
 				if (isLoggedIn) return true;
-				return false; // Redirect unauthenticated users to login page
+				// Redirect unauthenticated users to login page
+				return false;
 			} else if (isLoggedIn) {
-				return Response.redirect(new URL("/recipes", nextUrl));
+				//return Response.redirect(new URL("/recipes", nextUrl));
 			}
 			return true;
 		},
