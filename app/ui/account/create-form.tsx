@@ -1,11 +1,18 @@
 "use client";
 import Link from "next/link";
 import { createUser, State } from "@/app/lib/actions";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
-export default function Form() {
-	const initialState: State = { message: null, errors: {} };
+export default function CreateAccountForm() {
+    const baseFormData = new FormData();
+    baseFormData.set("name", "");
+    baseFormData.set("email", "");
+    baseFormData.set("password", "");
+
+	const initialState: State = { fields: baseFormData, message: null, errors: {} };
 	const [state, formAction] = useActionState(createUser, initialState);
+
+    const [passwordIsVisible, setPasswordIsVisible] = useState(false);
 
 	return (
 		<form action={formAction}>
@@ -18,6 +25,17 @@ export default function Form() {
 					>
 						Enter username
 					</label>
+                    <div className="relative">
+							<input
+								id="name"
+								name="name"
+								type="text"
+								placeholder="Enter username"
+                                defaultValue={state.fields.get("name") as string}
+								className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+								aria-describedby="name-error"
+							/>
+						</div>
 					<div
 						id="name-error"
 						aria-live="polite"
@@ -43,6 +61,15 @@ export default function Form() {
 					>
 						Enter email
 					</label>
+                    <input
+						id="email"
+						name="email"
+						type="text"
+						placeholder="Enter email"
+                        defaultValue={state.fields.get("email") as string}
+						className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+						aria-describedby="email-error"
+					/>
 					<div
 						id="email-error"
 						aria-live="polite"
@@ -68,6 +95,25 @@ export default function Form() {
 					>
 						Enter password
 					</label>
+                    <div className="flex">
+                        <input
+					    	id="password"
+					    	name="password"
+					    	type={passwordIsVisible ? "text" : "password"}
+					    	placeholder="Enter password"
+					    	className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+					    	aria-describedby="password-error"
+					    />
+                        <button 
+                            type="button"
+                            onClick={()=>{
+                                setPasswordIsVisible((b) => !b);
+                            }}
+                            className="flex h-10 ml-5 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
+                            >
+                            {passwordIsVisible ? "Hide Password" : "Show Password"}
+                        </button>
+                    </div>
 					<div
 						id="password-error"
 						aria-live="polite"
@@ -95,7 +141,7 @@ export default function Form() {
 				>
 					Cancel
 				</Link>
-				<button type="submit">Create Account</button>
+				<button type="submit" className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200">Create Account</button>
 			</div>
 		</form>
 	);
