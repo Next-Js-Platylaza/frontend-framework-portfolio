@@ -61,7 +61,7 @@ export default function LoginForm() {
 									state?.fields.get("password") as string
 								}
 								required
-								minLength={6}
+								minLength={4}
 								onBlur={() => {
 									setPasswordIsVisible(false);
 								}}
