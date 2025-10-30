@@ -3,6 +3,7 @@ import { fetchUser } from "@/app/lib/data";
 import { getCurrentUserId } from "@/auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 export default async function Page() {
 	const userId = (await getCurrentUserId()) as string;
@@ -26,8 +27,8 @@ export default async function Page() {
 		);
 	}*/
 	return (
-		<>
+		<Suspense>
 			<EditAccountForm />
-		</>
+		</Suspense>
 	);
 }

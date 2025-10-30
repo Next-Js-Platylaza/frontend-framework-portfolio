@@ -9,10 +9,11 @@ export default function LoginForm() {
 	initialFormData.set("email", "");
 	initialFormData.set("password", "");
 
+	
 	const searchParams = useSearchParams();
 
 	const callbackUrl = searchParams.get("callbackUrl") ?? "/";
-
+	
 	const initialState: FormState = { fields: initialFormData, message: null };
 	const [state, formAction, isPending] = useActionState(
 		authenticate,
