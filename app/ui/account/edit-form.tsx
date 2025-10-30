@@ -2,12 +2,19 @@
 import Link from "next/link";
 import { createUser, FormState } from "@/app/lib/actions";
 import { useActionState, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
-export default function CreateAccountForm() {
+export default function EditAccountForm() {
+	const searchParams = useSearchParams();
+	const username = searchParams.get("name");
+	const email = searchParams.get("email");
+
 	const initialFormData = new FormData();
-	initialFormData.set("name", "");
-	initialFormData.set("email", "");
-	initialFormData.set("password", "");
+	initialFormData.set("name", username as string);
+	initialFormData.set("email", email as string);
+	initialFormData.set("new-password", "");
+	initialFormData.set("new-password-confirmation", "");
+	initialFormData.set("old-password", "");
 
 	const initialState: FormState = {
 		fields: initialFormData,
@@ -35,7 +42,11 @@ export default function CreateAccountForm() {
 							name="name"
 							type="text"
 							placeholder="Enter username"
-							defaultValue={state.fields.get("name") as string}
+							defaultValue={
+								true
+									? (initialFormData.get("name") as string)
+									: (state.fields.get("name") as string)
+							}
 							className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
 							aria-describedby="name-error"
 						/>

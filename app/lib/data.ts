@@ -4,17 +4,29 @@ import { User, Recipe } from "./definitions";
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
 export async function fetchUser(
-	emailIsUsername: boolean,
-	email: string,
+	column: string,
+	searchValue: string,
 ): Promise<User | undefined> {
 	try {
 		let user;
-		if (emailIsUsername) {
-			user = await sql<User[]>`SELECT * FROM users WHERE name = ${email}`;
-		} else {
-			user = await sql<
-				User[]
-			>`SELECT * FROM users WHERE email = ${email}`;
+		switch (column) {
+			case "name":
+				user = await sql<
+					User[]
+				>`SELECT * FROM users WHERE name = ${searchValue}`;
+				break;
+			case "email":
+				user = await sql<
+					User[]
+				>`SELECT * FROM users WHERE email = ${searchValue}`;
+				break;
+			case "id":
+				user = await sql<
+					User[]
+				>`SELECT * FROM users WHERE id = ${searchValue}`;
+				break;
+			default:
+				throw Error(`Failed to fetch user. Unknown column: ${column}`);
 		}
 
 		return user[0];

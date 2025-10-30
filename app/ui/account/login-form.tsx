@@ -2,13 +2,16 @@
 
 import { useActionState, useState } from "react";
 import { authenticate, FormState } from "@/app/lib/actions";
+import { useSearchParams } from "next/navigation";
 
 export default function LoginForm() {
 	const initialFormData = new FormData();
 	initialFormData.set("email", "");
 	initialFormData.set("password", "");
 
-	const callbackUrl = "/recipes";
+	const searchParams = useSearchParams();
+
+	const callbackUrl = searchParams.get("callbackUrl") ?? "/";
 
 	const initialState: FormState = { fields: initialFormData, message: null };
 	const [state, formAction, isPending] = useActionState(

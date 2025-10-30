@@ -46,7 +46,10 @@ export const { auth, signIn, signOut } = NextAuth({
 
 				if (parsedCredentials.success) {
 					const { email, password } = parsedCredentials.data;
-					const user = await fetchUser(usedUsernameMethod, email);
+					const user = await fetchUser(
+						usedUsernameMethod ? "name" : "email",
+						email,
+					);
 
 					if (!user) return null;
 					const passwordsMatch = await bcrypt.compare(
@@ -66,8 +69,10 @@ export const { auth, signIn, signOut } = NextAuth({
 
 export async function getCurrentUserId() {
 	const session = await auth();
+	if (!session?.user) return null;
+
 	const user = session?.user
-		? await fetchUser(false, session.user.email as string)
+		? await fetchUser("email", session.user.email as string)
 		: null;
 
 	return user?.id;

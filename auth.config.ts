@@ -8,7 +8,9 @@ export const authConfig = {
 	callbacks: {
 		authorized({ auth, request: { nextUrl } }) {
 			const isLoggedIn = !!auth?.user;
-			const loginIsRequired = nextUrl.pathname.startsWith("/recipes");
+			const loginIsRequired =
+				nextUrl.pathname.startsWith("/recipes") ||
+				nextUrl.pathname.includes("edit");
 			if (loginIsRequired) {
 				if (isLoggedIn) return true;
 				// Redirect unauthenticated users to login page
