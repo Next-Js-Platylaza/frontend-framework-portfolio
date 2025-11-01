@@ -10,7 +10,7 @@ export type Recipe = {
 	image: string;
 	ingredients: string[];
 	steps: string[];
-	userId: string;
+	user_id: string;
 };
 
 export interface LinkStructure {

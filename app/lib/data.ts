@@ -52,11 +52,27 @@ export async function fetchUsers() {
 	}
 }
 
+export async function fetchRecipeById(id: string) {
+	try {
+		const recipes = await sql<Recipe[]>`
+            SELECT
+            *
+            FROM recipes
+			WHERE id = ${id}
+            ORDER BY title ASC
+        `;
+
+		return recipes[0];
+	} catch (err) {
+		console.error("Database Error:", err);
+		throw new Error("Failed to fetch user's recipes.");
+	}
+}
 export async function fetchRecipesByUser(userId: string) {
 	try {
 		const recipes = await sql<Recipe[]>`
             SELECT
-            id, title, image, ingredients, steps
+            *
             FROM recipes
 			WHERE user_id = ${userId}
             ORDER BY title ASC

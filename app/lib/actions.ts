@@ -36,6 +36,15 @@ export async function authenticate(
 	}
 }
 
+async function generateUuid() {
+	try {
+		const uuidgenerator = await fetch("https://www.uuidgenerator.net/api/version4");
+		return (await uuidgenerator.text())
+	} catch {
+		throw Error("API Error: Failed to generate uuid.");
+	}
+}
+
 const FormSchema = z.object({
 	id: z.string(),
 	name: z
@@ -85,8 +94,7 @@ export async function createUser(prevState: FormState | undefined, formData: For
 	// Prepare data for insertion into the database
 	let uuid = "";
 	try {
-		const uuidgenerator = await fetch("https://www.uuidgenerator.net/api/version4");
-		uuid = (await uuidgenerator.text()).toString();
+		uuid = generateUuid().toString();
 	} catch (error) {
 		return {
 			fields: formData,
