@@ -16,7 +16,14 @@ export default async function Page() {
 		<>
 			<p>Recipes Page.</p>
 			{recipes?.map((recipe) => {
-				return <RecipeCard key={recipe.id} recipe={recipe}/>;	
+				return (
+					<div key={recipe.id}>
+						<br/>
+						<RecipeCard recipe={recipe}/>
+					    <br />
+	    				<hr />
+					</div>
+				);	
 			})}
 		</>
 	);

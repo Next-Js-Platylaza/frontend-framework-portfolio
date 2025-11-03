@@ -84,3 +84,7 @@ export async function fetchRecipesByUser(userId: string) {
 		throw new Error("Failed to fetch user's recipes.");
 	}
 }
+
+export async function searchh(text:string) {
+    return "";
+}

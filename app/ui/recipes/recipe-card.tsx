@@ -7,7 +7,6 @@ export default function RecipeCard({recipe}:{recipe : Recipe}) {
         <Link
             href={`/recipes/${recipe.id}/view`}
         >
-    		<br />
     		<ul className="list-disc">
     			<li>Title: {recipe.title}</li>
     			<li>Image Path: {recipe.image}</li>
@@ -32,8 +31,6 @@ export default function RecipeCard({recipe}:{recipe : Recipe}) {
 				    </ol>
 			    </li>
 		    </ul>
-	    	<br />
-	    	<hr />
 	    </Link>
 	);
 }

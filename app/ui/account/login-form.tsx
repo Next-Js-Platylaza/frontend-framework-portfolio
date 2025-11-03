@@ -8,7 +8,6 @@ export default function LoginForm() {
 	const initialFormData = new FormData();
 	initialFormData.set("email", "");
 	initialFormData.set("password", "");
-
 	
 	const searchParams = useSearchParams();
 
