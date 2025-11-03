@@ -1,19 +1,22 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { authenticate, FormState } from "@/app/lib/actions";
+import { authenticate, AccountFormState } from "@/app/lib/actions";
 import { useSearchParams } from "next/navigation";
 
 export default function LoginForm() {
 	const initialFormData = new FormData();
 	initialFormData.set("email", "");
 	initialFormData.set("password", "");
-	
+
 	const searchParams = useSearchParams();
 
 	const callbackUrl = searchParams.get("callbackUrl") ?? "/";
-	
-	const initialState: FormState = { fields: initialFormData, message: null };
+
+	const initialState: AccountFormState = {
+		fields: initialFormData,
+		message: null,
+	};
 	const [state, formAction, isPending] = useActionState(
 		authenticate,
 		initialState,
@@ -24,7 +27,9 @@ export default function LoginForm() {
 		<form action={formAction} className="space-y-3">
 			<div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
 				{callbackUrl != "/" && (
-					<h1 className={"mb-3 text-2xl"}>Please log in to continue.</h1>
+					<h1 className={"mb-3 text-2xl"}>
+						Please log in to continue.
+					</h1>
 				)}
 				<div className="w-full">
 					<div>

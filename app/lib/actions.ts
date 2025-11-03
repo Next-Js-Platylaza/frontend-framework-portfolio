@@ -1,4 +1,5 @@
-"use server"
+import { Recipe } from "./definitions";
+("use server");
 import { signIn } from "@/auth";
 import { AuthError } from "next-auth";
 import { z } from "zod";
@@ -10,7 +11,7 @@ import postgres from "postgres";
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
 export async function authenticate(
-	prevState: FormState | undefined,
+	prevState: AccountFormState | undefined,
 	formData: FormData,
 ) {
 	try {
@@ -22,7 +23,7 @@ export async function authenticate(
 					return {
 						fields: formData,
 						errors: undefined,
-						message: `Invalid credentials. ${formData.get("email")}, ${formData.get("password")}`,
+						message: "Invalid credentials.",
 					};
 				default:
 					return {
@@ -38,34 +39,32 @@ export async function authenticate(
 
 async function generateUuid() {
 	try {
-		const uuidgenerator = await fetch("https://www.uuidgenerator.net/api/version4");
-		return (await uuidgenerator.text())
+		const uuidgenerator = await fetch(
+			"https://www.uuidgenerator.net/api/version4",
+		);
+		return await uuidgenerator.text();
 	} catch {
 		throw Error("API Error: Failed to generate uuid.");
 	}
 }
 
-const FormSchema = z.object({
+const AccountFormSchema = z.object({
 	id: z.string(),
 	name: z
-		.string({ error: "Please enter a username.", })
-		.min(3, { error: "Username must contain more than 3 characters",})
-		.max(15, { error: "Username must be shorter than 16 characters",
-	}),
-	email: z
-		.email({ error: "Please input a valid email address.",
-	}),
+		.string({ error: "Please enter a username." })
+		.min(3, { error: "Username must contain more than 3 characters" })
+		.max(15, { error: "Username must be shorter than 16 characters" }),
+	email: z.email({ error: "Please input a valid email address." }),
 	password: z
-		.string({ error: "Please input a valid password.",})
-		.min(5, { error: "Password must contain more than 5 characters",})
-		.max(25, { error: "Password must be less than 26 characters",
-	}),
+		.string({ error: "Please input a valid password." })
+		.min(5, { error: "Password must contain more than 5 characters" })
+		.max(25, { error: "Password must be less than 26 characters" }),
 });
 
-const CreateUser = FormSchema.omit({ id: true });
+const CreateUser = AccountFormSchema.omit({ id: true });
 
-export type FormState = {
-	fields: FormData,
+export type AccountFormState = {
+	fields: FormData;
 	errors?: {
 		name?: string[];
 		email?: string[];
@@ -74,7 +73,10 @@ export type FormState = {
 	message?: string | null;
 };
 
-export async function createUser(prevState: FormState | undefined, formData: FormData) {
+export async function createUser(
+	prevState: AccountFormState | undefined,
+	formData: FormData,
+) {
 	// Validate form using Zod
 	const validatedFields = CreateUser.safeParse({
 		name: formData.get("name"),
@@ -103,7 +105,7 @@ export async function createUser(prevState: FormState | undefined, formData: For
 	}
 
 	const { name, email, password } = validatedFields.data;
-	bcrypt.hash(password, 10, async function(error, hash) {
+	bcrypt.hash(password, 10, async function (error, hash) {
 		// Insert data into the database
 		try {
 			await sql`
@@ -114,7 +116,8 @@ export async function createUser(prevState: FormState | undefined, formData: For
 			// If a database error occurs, return a more specific error.
 			return {
 				fields: formData,
-				message: "Database Error: Failed to Create User. | Error: " + error,
+				message:
+					"Database Error: Failed to Create User. | Error: " + error,
 			};
 		}
 	});
@@ -122,4 +125,90 @@ export async function createUser(prevState: FormState | undefined, formData: For
 	// Revalidate the cache for the users page and redirect the user.
 	revalidatePath("/");
 	redirect("/");
+}
+
+const RecipeFormSchema = z.object({
+	id: z.string(),
+	title: z
+		.string({ error: "Please enter a username." })
+		.min(3, { error: "Username must contain more than 3 characters" })
+		.max(15, { error: "Username must be shorter than 16 characters" }),
+	image: z
+		.string({ error: "Please input a valid password." })
+		.min(5, { error: "Password must contain more than 5 characters" })
+		.max(25, { error: "Password must be less than 26 characters" }),
+	ingredients: z
+		.string({ error: "Please input a valid password." })
+		.min(5, { error: "Password must contain more than 5 characters" })
+		.max(25, { error: "Password must be less than 26 characters" }),
+	steps: z
+		.string({ error: "Please input a valid password." })
+		.min(5, { error: "Password must contain more than 5 characters" })
+		.max(25, { error: "Password must be less than 26 characters" }),
+});
+
+const CreateRecipe = RecipeFormSchema.omit({ id: true });
+
+export type RecipeFormState = {
+	fields: FormData;
+	errors?: {
+		title?: string[];
+		image?: string[];
+		ingredients?: string[];
+		steps?: string[];
+	};
+	message?: string | null;
+};
+
+export async function createRecipe(
+	prevState: RecipeFormState | undefined,
+	formData: FormData,
+) {
+	// Validate form using Zod
+	const validatedFields = CreateRecipe.safeParse({
+		title: formData.get("title"),
+		image: formData.get("image"),
+		ingredients: formData.get("ingredients"),
+		steps: formData.get("steps"),
+	});
+
+	// If form validation fails, return errors early. Otherwise, continue.
+	if (!validatedFields.success) {
+		return {
+			fields: formData,
+			errors: validatedFields.error.flatten().fieldErrors,
+			message: "Missing Fields. Failed to Create Recipe.",
+		};
+	}
+
+	// Prepare data for insertion into the database
+	let uuid = "";
+	try {
+		uuid = generateUuid().toString();
+	} catch (error) {
+		return {
+			fields: formData,
+			message: "API Error: Failed to Create Recipe. | Error: " + error,
+		};
+	}
+
+	const { title, image, ingredients, steps } = validatedFields.data;
+	// Insert data into the database
+	try {
+		await sql`
+			INSERT INTO recipes (id, title, image, ingredients, steps)
+			VALUES (${uuid}, ${title}, ${image}, ${ingredients}, ${steps})
+		  `;
+	} catch (error) {
+		// If a database error occurs, return a more specific error.
+		return {
+			fields: formData,
+			message:
+				"Database Error: Failed to Create Recipe. | Error: " + error,
+		};
+	}
+
+	// Revalidate the cache for the recipes page and redirect the user.
+	revalidatePath(`/recipes/${uuid}/view`);
+	redirect(`/recipes/${uuid}/view`);
 }

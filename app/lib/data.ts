@@ -85,6 +85,21 @@ export async function fetchRecipesByUser(userId: string) {
 	}
 }
 
-export async function searchh(text:string) {
-    return "";
+const ITEMS_PER_PAGE = 10;
+export async function fetchRecipesPages(query: string, userId: string) {
+	try {
+		const data = await sql`SELECT COUNT(*)
+    FROM recipes
+    WHERE
+      title ILIKE ${`%${query}%`} OR
+      date::text ILIKE ${`%${query}%`} OR
+	  AND user_id = ${userId}
+  `;
+
+		const totalPages = Math.ceil(Number(data[0].count) / ITEMS_PER_PAGE);
+		return totalPages;
+	} catch (error) {
+		console.error("Database Error:", error);
+		throw new Error("Failed to fetch total number of recipes.");
+	}
 }

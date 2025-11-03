@@ -3,7 +3,7 @@ import Link from "next/link";
 import { createUser, AccountFormState } from "@/app/lib/actions";
 import { useActionState, useState } from "react";
 
-export default function CreateAccountForm() {
+export default function CreateRecipeForm() {
 	const initialFormData = new FormData();
 	initialFormData.set("name", "");
 	initialFormData.set("email", "");
