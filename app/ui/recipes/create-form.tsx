@@ -2,6 +2,8 @@
 import Link from "next/link";
 import { createUser, AccountFormState } from "@/app/lib/actions";
 import { useActionState, useState } from "react";
+import ArrayInput from "./array-input";
+import { v1 as uuidv1 } from "uuid";
 
 export default function CreateRecipeForm() {
 	const initialFormData = new FormData();
@@ -16,11 +18,67 @@ export default function CreateRecipeForm() {
 	};
 	const [state, formAction] = useActionState(createUser, initialState);
 
+	const [ingredients, setIngredients] = useState([
+		<ArrayInput
+			key={0}
+			attributes={{
+				name: "first-ingredient",
+				type: "text",
+				placeholder: "first ingredient",
+			}}
+			removeComponent={() => {
+				onRemoveIngredient(0);
+			}}
+		/>,
+	]);
 	const [passwordIsVisible, setPasswordIsVisible] = useState(false);
+
+	function onAddIngredient() {
+		const uuid = uuidv1();
+		setIngredients([
+			...ingredients,
+			<ArrayInput
+				key={uuid}
+				attributes={{
+					name: `${uuid}`,
+					type: "text",
+					defaultValue: `${uuid}`,
+				}}
+				removeComponent={() => {
+					onRemoveIngredient(ingredients.length);
+				}}
+			/>,
+		]);
+	}
+	function onRemoveIngredient(index: number) {
+		const newIngredients = [...ingredients];
+
+		newIngredients.splice(index, 0);
+
+		setIngredients(newIngredients.concat(ingredients.slice(index + 1)));
+
+		/*setIngredients(
+			ingredients.filter((ingredient) => {
+				console.log(
+					`${name} !== ${ingredient.props.attributes.name} is ${
+						name !== ingredient.props.attributes.name
+					}`,
+				);
+				return name !== ingredient.props.attributes.name;
+			}),
+		);*/
+	}
 
 	return (
 		<form action={formAction}>
 			<div className="rounded-md bg-gray-50 p-4 md:p-6">
+				{ingredients.map((component, i) => (
+					<div key={component.props.attributes.name}>{component}</div>
+				))}
+				<button type="button" onClick={onAddIngredient}>
+					Add Ingredient
+				</button>
+
 				{/* User Name */}
 				<div className="mb-4">
 					<label
@@ -52,7 +110,6 @@ export default function CreateRecipeForm() {
 							))}
 					</div>
 				</div>
-
 				{/* User Email */}
 				<div className="mb-4">
 					<label

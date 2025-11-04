@@ -19,6 +19,7 @@
 		"tailwindcss": "3.4.17",
 		"typescript": "^5.7.3",
 		"use-debounce": "^10.0.6",
+		"uuid": "^13.0.0",
 		"zod": "^4.1.12"
 	},
 	"devDependencies": {

@@ -13,7 +13,18 @@ export type Recipe = {
 	user_id: string;
 };
 
-export interface LinkStructure {
+export type LinkStructure = {
 	name?: string;
 	href: string;
-}
+};
+
+export type InputAttributes = {
+	name: string;
+	type: string;
+	defaultValue?: string;
+	placeholder?: string;
+	minLength?: number;
+	maxLength?: number;
+	required?: boolean;
+	styles?: string;
+};

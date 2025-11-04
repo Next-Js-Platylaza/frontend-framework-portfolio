@@ -92,7 +92,7 @@ export async function fetchRecipesPages(query: string, userId: string) {
     FROM recipes
     WHERE
       title ILIKE ${`%${query}%`} OR
-      date::text ILIKE ${`%${query}%`} OR
+      date::text ILIKE ${`%${query}%`}
 	  AND user_id = ${userId}
   `;
 
