@@ -77,3 +77,14 @@ export async function getCurrentUserId() {
 
 	return user?.id;
 }
+
+export async function getCurrentUserName() {
+	const session = await auth();
+	if (!session?.user) return null;
+
+	const user = session?.user
+		? await fetchUser("email", session.user.email as string)
+		: null;
+
+	return user?.name;
+}

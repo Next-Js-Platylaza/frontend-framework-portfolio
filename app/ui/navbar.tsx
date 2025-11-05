@@ -1,4 +1,4 @@
-import { signOut, getCurrentUserId } from "@/auth";
+import { signOut, getCurrentUserName } from "@/auth";
 import NavLinks from "@/app/ui/nav-links";
 import Link from "next/link";
 
@@ -7,15 +7,15 @@ export default async function Navbar({
 }: {
 	children: React.ReactNode;
 }) {
-	const isSignedIn = (await getCurrentUserId()) != null;
+	const userName = await getCurrentUserName();
 	const signInSignOutClass =
-		"flex ml-[5px] my-auto h-[60px] w-[100px] grow items-center justify-center rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:p-2 md:px-3 md:ml-auto";
+		"flex ml-[5px] my-auto h-[60px] min-w-[100px] w-auto grow items-center justify-center rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:p-2 md:px-3 md:ml-auto";
 
 	return (
 		<div className="flex w-full bg-gray-300 p-2">
 			<NavLinks />
 			{children}
-			{isSignedIn ? (
+			{userName != null ? (
 				<button
 					className={signInSignOutClass}
 					onClick={async () => {
@@ -23,7 +23,7 @@ export default async function Navbar({
 						await signOut({ redirectTo: "/" });
 					}}
 				>
-					<div>Sign Out</div>
+					<div>Sign Out<p className="m-[-1pt] text-xs whitespace-nowrap">{`(${userName})`}</p></div>
 				</button>
 			) : (
 				<Link href="account/login" className={signInSignOutClass}>
