@@ -120,6 +120,12 @@ export async function createUser(
 		};
 	}
 
+	// Sign the user !!! - DOES NOT WORK - !!!
+	/*const signInFormData = new FormData();
+	signInFormData.set("email", "");
+	signInFormData.set("password", "");
+	authenticate({ fields: signInFormData }, signInFormData);*/
+
 	// Revalidate the cache for the users page and redirect the user.
 	revalidatePath("/");
 	redirect("/");
