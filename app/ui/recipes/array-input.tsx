@@ -21,13 +21,17 @@ export default function ArrayInput({
 				maxLength={attributes?.maxLength}
 				required={attributes?.required}
 			/>
+			{attributes.name != "0" &&
 			<button
+				type="button"
 				onClick={() => {
 					removeComponent(attributes.name);
 				}}
 			>
 				Remove
 			</button>
+			}
+			
 		</div>
 	);
 }

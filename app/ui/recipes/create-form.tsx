@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { createUser, AccountFormState } from "@/app/lib/actions";
-import { use, useActionState, useEffect, useRef, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import ArrayInput from "./array-input";
 import { v1 as uuidv1 } from "uuid";
 
@@ -18,70 +18,10 @@ export default function CreateRecipeForm() {
 	};
 	const [state, formAction] = useActionState(createUser, initialState);
 
-	const [ingredients, setIngredients] = useState([
-		<ArrayInput
-			key={0}
-			attributes={{
-				name: "first-ingredient",
-				type: "text",
-				placeholder: "first ingredient",
-			}}
-			removeComponent={() => {
-				onRemoveIngredient("0");
-			}}
-		/>,
-	]);
+	//#region - Ingredient Management
+	const [ingredients, setIngredients] = useState([NewIngredient("0")]);
 	const [ingredientIDs, setIngredientIDs] = useState(["0"]);
-
 	const [ingIDToRemove, setIngIDToRemove] = useState("None");
-
-	const [passwordIsVisible, setPasswordIsVisible] = useState(false);
-
-	const testt = useRef(1);
-
-	function onAddIngredient() {
-		const uuid = `${testt.current}-${uuidv1()}`;
-		testt.current++;
-		setIngredients([
-			...ingredients,
-			<ArrayInput
-				key={uuid}
-				attributes={{
-					name: `${testt.current}`,
-					type: "text",
-					defaultValue: `${uuid}`,
-				}}
-				removeComponent={() => {
-					setIngIDToRemove(uuid);
-					//onRemoveIngredient(uuid);
-				}}
-			/>,
-		]);
-		setIngredientIDs([...ingredientIDs, uuid]);
-	}
-	function onRemoveIngredient(uuid: string) {
-
-		const index = ingredientIDs.indexOf(uuid);
-		console.log(index);
-		console.log(ingredientIDs);
-		console.log(uuid);
-
-		setIngredients((ings) => 
-			[...ings.slice(0, index), ...ings.slice(index+1)]
-		);
-		setIngredientIDs((ingIDs) => 
-			[...ingIDs.slice(0, index), ...ingIDs.slice(index+1)]
-		);
-
-
-		/*
-		console.log(index);
-		console.log(ingredients.length);
-		setIngredients((ings) => 
-			[...ings.slice(0, index), ...ings.slice(index+1)]
-		);
-		 */
-	}
 
 	useEffect(()=> {
 		if (ingIDToRemove != "None") {
@@ -89,14 +29,104 @@ export default function CreateRecipeForm() {
 		}
 	}, [ingIDToRemove]);
 
+	function NewIngredient(id : string)
+	{
+		return (
+			<ArrayInput
+				key={id}
+				attributes={{
+					name: id,
+					type: "text",
+					placeholder: "Enter ingredient",
+				}}
+				removeComponent={() => {
+					setIngIDToRemove(id);
+			}}
+			/>
+		);
+	}
+
+	function onAddIngredient() {
+		const uuid = uuidv1();
+		setIngredients([
+			...ingredients,
+			NewIngredient(uuid),
+		]);
+		setIngredientIDs([...ingredientIDs, uuid]);
+	}
+	function onRemoveIngredient(uuid: string) {
+		const index = ingredientIDs.indexOf(uuid);
+		setIngredients((ings) => 
+			[...ings.slice(0, index), ...ings.slice(index+1)]
+		);
+		setIngredientIDs((ingIDs) => 
+			[...ingIDs.slice(0, index), ...ingIDs.slice(index+1)]
+		);
+	}
+	//#endregion - Ingredient Management
+
+	//#region - Step Management
+	const [steps, setSteps] = useState([NewStep("0")]);
+	const [stepIDs, setStepIDs] = useState(["0"]);
+	const [stepIDToRemove, setStepIDToRemove] = useState("None");
+
+	useEffect(()=> {
+		if (stepIDToRemove != "None") {
+			onRemoveStep(stepIDToRemove)
+		}
+	}, [stepIDToRemove]);
+
+	function NewStep(id : string)
+	{
+		return (
+			<ArrayInput
+				key={id}
+				attributes={{
+					name: id,
+					type: "text",
+					placeholder: "Enter step",
+				}}
+				removeComponent={() => {
+					setStepIDToRemove(id);
+			}}
+			/>
+		);
+	}
+
+	function onAddStep() {
+		const uuid = uuidv1();
+		setSteps([
+			...steps,
+			NewStep(uuid),
+		]);
+		setStepIDs([...stepIDs, uuid]);
+	}
+	function onRemoveStep(uuid: string) {
+		const index = stepIDs.indexOf(uuid);
+		setSteps((steps) => 
+			[...steps.slice(0, index), ...steps.slice(index+1)]
+		);
+		setStepIDs((stepIDs) => 
+			[...stepIDs.slice(0, index), ...stepIDs.slice(index+1)]
+		);
+	}
+	//#endregion - Step Management
+
 	return (
 		<form action={formAction}>
 			<div className="rounded-md bg-gray-50 p-4 md:p-6">
-				{ingredients.map((component, i) => (
+				{ingredients.map((component) => (
 					<div key={component.props.attributes.name}>{component}</div>
 				))}
 				<button type="button" onClick={onAddIngredient}>
 					Add Ingredient
+				</button>
+				<hr/>
+				{steps.map((component) => (
+					<div key={component.props.attributes.name}>{component}</div>
+				))}
+				<button type="button" onClick={onAddStep}>
+					Add Step
 				</button>
 
 				{/* User Name */}
@@ -150,53 +180,6 @@ export default function CreateRecipeForm() {
 					<div id="email-error" aria-live="polite" aria-atomic="true">
 						{state.errors?.email &&
 							state.errors.email.map((error: string) => (
-								<p
-									className="mt-2 text-sm text-red-500"
-									key={error}
-								>
-									{error}
-								</p>
-							))}
-					</div>
-				</div>
-
-				{/* User Password */}
-				<div className="mb-4">
-					<label
-						htmlFor="password"
-						className="mb-2 block text-sm font-medium"
-					>
-						Enter password
-					</label>
-					<div className="flex">
-						<input
-							id="password"
-							name="password"
-							type={passwordIsVisible ? "text" : "password"}
-							placeholder="Enter password"
-							className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-							aria-describedby="password-error"
-						/>
-						{/* Show/Hide Password Button*/}
-						<button
-							type="button"
-							onClick={() => {
-								setPasswordIsVisible((b) => !b);
-							}}
-							className="flex h-10 ml-5 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
-						>
-							{passwordIsVisible
-								? "Hide Password"
-								: "Show Password"}
-						</button>
-					</div>
-					<div
-						id="password-error"
-						aria-live="polite"
-						aria-atomic="true"
-					>
-						{state.errors?.password &&
-							state.errors.password.map((error: string) => (
 								<p
 									className="mt-2 text-sm text-red-500"
 									key={error}
