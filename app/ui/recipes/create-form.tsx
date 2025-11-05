@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { createUser, AccountFormState } from "@/app/lib/actions";
-import { useActionState, useState } from "react";
+import { use, useActionState, useEffect, useRef, useState } from "react";
 import ArrayInput from "./array-input";
 import { v1 as uuidv1 } from "uuid";
 
@@ -27,47 +27,67 @@ export default function CreateRecipeForm() {
 				placeholder: "first ingredient",
 			}}
 			removeComponent={() => {
-				onRemoveIngredient(0);
+				onRemoveIngredient("0");
 			}}
 		/>,
 	]);
+	const [ingredientIDs, setIngredientIDs] = useState(["0"]);
+
+	const [ingIDToRemove, setIngIDToRemove] = useState("None");
+
 	const [passwordIsVisible, setPasswordIsVisible] = useState(false);
 
+	const testt = useRef(1);
+
 	function onAddIngredient() {
-		const uuid = uuidv1();
+		const uuid = `${testt.current}-${uuidv1()}`;
+		testt.current++;
 		setIngredients([
 			...ingredients,
 			<ArrayInput
 				key={uuid}
 				attributes={{
-					name: `${uuid}`,
+					name: `${testt.current}`,
 					type: "text",
 					defaultValue: `${uuid}`,
 				}}
 				removeComponent={() => {
-					onRemoveIngredient(ingredients.length);
+					setIngIDToRemove(uuid);
+					//onRemoveIngredient(uuid);
 				}}
 			/>,
 		]);
+		setIngredientIDs([...ingredientIDs, uuid]);
 	}
-	function onRemoveIngredient(index: number) {
-		const newIngredients = [...ingredients];
+	function onRemoveIngredient(uuid: string) {
 
-		newIngredients.splice(index, 0);
+		const index = ingredientIDs.indexOf(uuid);
+		console.log(index);
+		console.log(ingredientIDs);
+		console.log(uuid);
 
-		setIngredients(newIngredients.concat(ingredients.slice(index + 1)));
+		setIngredients((ings) => 
+			[...ings.slice(0, index), ...ings.slice(index+1)]
+		);
+		setIngredientIDs((ingIDs) => 
+			[...ingIDs.slice(0, index), ...ingIDs.slice(index+1)]
+		);
 
-		/*setIngredients(
-			ingredients.filter((ingredient) => {
-				console.log(
-					`${name} !== ${ingredient.props.attributes.name} is ${
-						name !== ingredient.props.attributes.name
-					}`,
-				);
-				return name !== ingredient.props.attributes.name;
-			}),
-		);*/
+
+		/*
+		console.log(index);
+		console.log(ingredients.length);
+		setIngredients((ings) => 
+			[...ings.slice(0, index), ...ings.slice(index+1)]
+		);
+		 */
 	}
+
+	useEffect(()=> {
+		if (ingIDToRemove != "None") {
+			onRemoveIngredient(ingIDToRemove)
+		}
+	}, [ingIDToRemove]);
 
 	return (
 		<form action={formAction}>
