@@ -21,7 +21,7 @@ export default function Subbar() {
 				<div className="h-[40px] w-[2px] mx-auto bg-gray-500" />
 			</div>
 			<div className="flex w-full ml-auto max-md:w-[500px]">
-				<SearchBar />
+				<SearchBar placeholder={""} />
 			</div>
 		</div>
 	);

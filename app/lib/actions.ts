@@ -74,7 +74,7 @@ export type AccountFormState = {
 };
 
 export async function createUser(
-	prevState: AccountFormState | undefined,
+	prevState: AccountFormState,
 	formData: FormData,
 ) {
 	// Validate form using Zod
@@ -105,6 +105,7 @@ export async function createUser(
 	}
 
 	const { name, email, password } = validatedFields.data;
+	try {
 	bcrypt.hash(password, 10, async function (error, hash) {
 		// Insert data into the database
 		try {
@@ -116,11 +117,16 @@ export async function createUser(
 			// If a database error occurs, return a more specific error.
 			return {
 				fields: formData,
-				message:
-					"Database Error: Failed to Create User. | Error: " + error,
+				message: "Database Error: Failed to Create User. | Error: " + error,
 			};
 		}
 	});
+	} catch (error) {
+		return {
+			fields: formData,
+			message: "API Error: Failed to hash password. | Error: " + error,
+		};
+	}		
 
 	// Revalidate the cache for the users page and redirect the user.
 	revalidatePath("/");
