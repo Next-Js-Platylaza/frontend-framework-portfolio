@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { authenticate, AccountFormState } from "@/app/lib/actions";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 export default function LoginForm() {
 	const initialFormData = new FormData();
@@ -25,7 +26,7 @@ export default function LoginForm() {
 	const [passwordIsVisible, setPasswordIsVisible] = useState(false);
 	return (
 		<form action={formAction} className="space-y-3">
-			<div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
+			<div className="rounded-md border-[2px] border-gray-300 w-[50%] m-auto bg-gray-100 mt-[5%] p-4 md:p-6 ">
 				{callbackUrl != "/" && (
 					<h1 className={"mb-3 text-2xl"}>
 						Please log in to continue.
@@ -34,7 +35,7 @@ export default function LoginForm() {
 				<div className="w-full">
 					<div>
 						<label
-							className="mb-3 mt-5 block text-xs font-medium text-gray-900"
+							className="mb-3 mt-2 block text-xs font-medium text-gray-900"
 							htmlFor="email"
 						>
 							Username or Email
@@ -53,54 +54,37 @@ export default function LoginForm() {
 							/>
 						</div>
 					</div>
-					<div className="mt-4">
+					<div>
 						<label
 							className="mb-3 mt-5 block text-xs font-medium text-gray-900"
 							htmlFor="password"
 						>
 							Password
 						</label>
-						<div className="relative">
+						<div className="flex">
 							<input
-								className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
 								id="password"
-								type={passwordIsVisible ? "text" : "password"}
 								name="password"
+								type={passwordIsVisible ? "text" : "password"}
 								placeholder="Enter password"
-								defaultValue={
-									state?.fields.get("password") as string
-								}
-								required
-								minLength={4}
-								onBlur={() => {
-									setPasswordIsVisible(false);
-								}}
+								className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+								aria-describedby="password-error"
 							/>
+							{/* Show/Hide Password Button*/}
+							<button
+								type="button"
+								onClick={() => {
+									setPasswordIsVisible((b) => !b);
+								}}
+								className="flex h-10 ml-5 items-center rounded-lg bg-gray-200 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
+							>
+								{passwordIsVisible
+									? "Hide Password"
+									: "Show Password"}
+							</button>
 						</div>
-						{/* Show/Hide Password Button*/}
-						<button
-							type="button"
-							onClick={() => {
-								setPasswordIsVisible((b) => !b);
-							}}
-							className="flex h-10 ml-5 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
-						>
-							{passwordIsVisible
-								? "Hide Password"
-								: "Show Password"}
-						</button>
 					</div>
 				</div>
-				<input type="hidden" name="redirectTo" value={callbackUrl} />
-				<button
-					className="mt-4 w-full h-10 ml-5 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
-					aria-disabled={isPending}
-					onClick={() => {
-						setPasswordIsVisible(false);
-					}}
-				>
-					Log in{" "}
-				</button>
 				<div
 					className="flex h-8 items-end space-x-1"
 					aria-live="polite"
@@ -114,6 +98,36 @@ export default function LoginForm() {
 						</>
 					)}
 				</div>
+
+				<hr className="mb-[25px]" />
+				<input type="hidden" name="redirectTo" value={callbackUrl} />
+
+				<div className="flex gap-4 w-[50%] mx-[25%] items-center px-[5%]">
+					<Link
+						href="/"
+						className="flex h-10 items-center rounded-lg bg-gray-200 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
+					>
+						Cancel
+					</Link>
+					<button
+						className="w-full h-10 items-center rounded-lg bg-gray-200 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
+						aria-disabled={isPending}
+						onClick={() => {
+							setPasswordIsVisible(false);
+						}}
+					>
+						Log in{" "}
+					</button>
+				</div>
+				<p className="mt-3 text-center">
+					Don't have an account?{" "}
+					<Link
+						className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600"
+						href="/account/create"
+					>
+						Create one!
+					</Link>
+				</p>
 			</div>
 		</form>
 	);
