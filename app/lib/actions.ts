@@ -7,6 +7,7 @@ import bcrypt from "bcrypt";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import postgres from "postgres";
+import { v4 as uuidv4 } from "uuid";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
@@ -37,14 +38,14 @@ export async function authenticate(
 	}
 }
 
-async function generateUuid() {
+async function hashPassword(plainTextPassword: string): Promise<string> {
+	const saltRounds = 5; // Adjust the cost factor (higher is more secure but slower)
 	try {
-		const uuidgenerator = await fetch(
-			"https://www.uuidgenerator.net/api/version4",
-		);
-		return await uuidgenerator.text();
-	} catch {
-		throw Error("API Error: Failed to generate uuid.");
+		const hashedPassword = await bcrypt.hash(plainTextPassword, saltRounds);
+		return hashedPassword;
+	} catch (error) {
+		console.error("API Error: Failed hashing password:", error);
+		throw error; // Re-throw or handle the error appropriately
 	}
 }
 
@@ -94,39 +95,30 @@ export async function createUser(
 	}
 
 	// Prepare data for insertion into the database
-	let uuid = "";
-	try {
-		uuid = generateUuid().toString();
-	} catch (error) {
-		return {
-			fields: formData,
-			message: "API Error: Failed to Create User. | Error: " + error,
-		};
-	}
+	const uuid = uuidv4();
 
 	const { name, email, password } = validatedFields.data;
+	const hash = await hashPassword(password);
+
 	try {
-	bcrypt.hash(password, 10, async function (error, hash) {
-		// Insert data into the database
-		try {
-			await sql`
-			INSERT INTO users (id, name, email, password)
-			VALUES (${uuid}, ${name}, ${email}, ${hash})
-		  `;
-		} catch (error) {
-			// If a database error occurs, return a more specific error.
-			return {
-				fields: formData,
-				message: "Database Error: Failed to Create User. | Error: " + error,
-			};
-		}
-	});
+		await sql`
+		INSERT INTO users (id, name, email, password)
+		VALUES (${uuid}, ${name}, ${email}, ${hash})`;
 	} catch (error) {
+		let message = "Something went wrong, please try again. | " + error;
+		if (`${error}`.includes("unique")) {
+			if (`${error}`.includes("name"))
+				message = "Username taken. Please choose another username.";
+			else if (`${error}`.includes("email"))
+				message = "Email taken. Please use another email.";
+			else message = "Failed to generate id, please try again.";
+		}
+
 		return {
 			fields: formData,
-			message: "API Error: Failed to hash password. | Error: " + error,
+			message: message,
 		};
-	}		
+	}
 
 	// Revalidate the cache for the users page and redirect the user.
 	revalidatePath("/");
@@ -188,15 +180,7 @@ export async function createRecipe(
 	}
 
 	// Prepare data for insertion into the database
-	let uuid = "";
-	try {
-		uuid = generateUuid().toString();
-	} catch (error) {
-		return {
-			fields: formData,
-			message: "API Error: Failed to Create Recipe. | Error: " + error,
-		};
-	}
+	let uuid = uuidv4();
 
 	const { title, image, ingredients, steps } = validatedFields.data;
 	// Insert data into the database
