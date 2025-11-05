@@ -120,10 +120,21 @@ export async function createUser(
 		};
 	}
 
-	// Sign the user !!! - DOES NOT WORK - !!!
-	/*const signInFormData = new FormData();
+	// Login the user
+	const signInFormData = new FormData();
 	signInFormData.set("email", "");
 	signInFormData.set("password", "");
+	
+    try {
+		await signIn("credentials", signInFormData);
+	} catch (error) {
+		return {
+			fields: formData,
+			message: "Account created, but failed to sign in.",
+		};
+	}
+	
+	/*!!! - DOES NOT WORK - !!!
 	authenticate({ fields: signInFormData }, signInFormData);*/
 
 	// Revalidate the cache for the users page and redirect the user.
