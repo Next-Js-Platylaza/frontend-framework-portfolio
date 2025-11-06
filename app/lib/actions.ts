@@ -122,28 +122,19 @@ export async function createUser(
 	}
 
 	// Login the user
-    try {
+	try {
 		await signIn("credentials", formData);
 	} catch (error) {
-		if (isRedirectError(error))
-		{
-			const url : string = formData.get("redirectTo") as string ?? "/";
-
+		if (isRedirectError(error)) {
+			const url: string = (formData.get("redirectTo") as string) ?? "/";
+			// Revalidate the cache and redirect the user. If auto-login worked
 			revalidatePath(url);
 			redirect(url);
 		}
-		return {
-			fields: formData,
-			message: "Account created, but failed to sign in. | " + error,
-		};
+		// Revalidate the cache and redirect the user. If auto-login failed
+		revalidatePath("/account/login");
+		redirect("/account/login");
 	}
-	
-	/*!!! - DOES NOT WORK - !!!
-	authenticate({ fields: signInFormData }, signInFormData);*/
-
-	// Revalidate the cache for the users page and redirect the user.
-	revalidatePath("/");
-	redirect("/");
 }
 
 const RecipeFormSchema = z.object({

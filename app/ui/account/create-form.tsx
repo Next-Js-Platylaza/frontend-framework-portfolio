@@ -156,7 +156,14 @@ export default function CreateAccountForm() {
 					Already have an account?{" "}
 					<Link
 						className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600"
-						href={`/account/login` + (callbackUrl != "/" ? `?callbackUrl=${callbackUrl}}` : "")}
+						href={
+							`/account/login` +
+							(callbackUrl != "/"
+								? `?callbackUrl=${encodeURIComponent(
+										callbackUrl,
+								  )}`
+								: "")
+						}
 					>
 						Login here!
 					</Link>
