@@ -125,16 +125,17 @@ export async function createUser(
 	try {
 		await signIn("credentials", formData);
 	} catch (error) {
-		if (isRedirectError(error)) {
-			const url: string = (formData.get("redirectTo") as string) ?? "/";
-			// Revalidate the cache and redirect the user. If auto-login worked
-			revalidatePath(url);
-			redirect(url);
+		if (!isRedirectError(error)) {
+			// Revalidate the cache and redirect the user. If auto-login failed
+			revalidatePath("/account/login");
+			redirect("/account/login");
 		}
-		// Revalidate the cache and redirect the user. If auto-login failed
-		revalidatePath("/account/login");
-		redirect("/account/login");
 	}
+
+	const url: string = (formData.get("redirectTo") as string) ?? "/";
+	// Revalidate the cache and redirect the user. If auto-login worked
+	revalidatePath(url);
+	redirect(url);
 }
 
 const RecipeFormSchema = z.object({
