@@ -16,6 +16,7 @@ export default function useArrayInput(
 	key: string,
 	inputMinMaxLength: [number, number],
 	classes?: ComponentClasses,
+	defaultValues?: string[] | null,
 ) {
 	const firstID: string = key + "-first";
 	const [items, setItems] = useState([NewItem(firstID)]);
@@ -36,6 +37,8 @@ export default function useArrayInput(
 					id: id,
 					label: label,
 					type: "text",
+					defaultValue:
+						id != firstID ? getDefaultValue(id) : undefined,
 					placeholder: `Enter ${label}`,
 					minLength: inputMinMaxLength[0],
 					maxLength: inputMinMaxLength[1],
@@ -50,6 +53,12 @@ export default function useArrayInput(
 				}}
 			/>
 		);
+	}
+
+	function getDefaultValue(id: string) {
+		if (!defaultValues || !items || items.length <= 0) return undefined;
+
+		return defaultValues[itemIDs.indexOf(id)];
 	}
 
 	function onAddItem() {
@@ -109,8 +118,8 @@ function ArrayInput({
 			/>
 			<input
 				className={attributes?.inputStyles}
-				id={attributes.id}
-				name={attributes.id}
+				id={`${attributes.label}${attributes.id}`}
+				name={`${attributes.label}[]`}
 				type={attributes.type}
 				defaultValue={attributes?.defaultValue}
 				placeholder={attributes?.placeholder}

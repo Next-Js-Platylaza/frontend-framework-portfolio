@@ -22,6 +22,7 @@ export default function CreateRecipeForm() {
 		"ings-array",
 		[1, 50],
 		{ input: "w-[325px]" },
+		//state.fields.get("ingredient")
 	);
 	const [stepsInput, stepValues] = useArrayInput(
 		"step",
@@ -48,8 +49,9 @@ export default function CreateRecipeForm() {
 							id="title"
 							name="title"
 							type="text"
-							placeholder="Recipe title"
+							placeholder="Ex: My Amazing Recipe"
 							defaultValue={state.fields.get("title") as string}
+							required={true}
 							className="w-full rounded-md border border-gray-50 py-2 pl-10 text-sm outline-1 placeholder:text-gray-500 focus:outline-2"
 							aria-describedby="title-error"
 						/>
@@ -80,8 +82,9 @@ export default function CreateRecipeForm() {
 							id="image"
 							name="image"
 							type="text"
-							placeholder="Recipe image"
+							placeholder="Ex: https://www.website.com/image.jpg"
 							defaultValue={state.fields.get("image") as string}
+							required={true}
 							className="w-full rounded-md border border-gray-50 py-2 pl-10 text-sm outline-1 placeholder:text-gray-500 focus:outline-2"
 							aria-describedby="image-error"
 						/>

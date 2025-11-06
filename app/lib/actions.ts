@@ -144,7 +144,7 @@ const RecipeFormSchema = z.object({
 		.string({ error: "Please enter a title." })
 		.min(4, { error: "Title must contain more than 3 characters" })
 		.max(20, { error: "Title must be 20 characters or shorter" }),
-	image: z.string({ error: "No image input." }),
+	image: z.httpUrl({ error: "Please enter a valid url." }),
 	ingredients: z.array(z.string({ error: "Please input a valid password." })),
 	steps: z.array(z.string({ error: "Please input a valid password." })),
 });
