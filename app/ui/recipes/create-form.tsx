@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { createRecipe, RecipeFormState } from "@/app/lib/actions";
 import { useActionState, useEffect, useState } from "react";
-import { v1 as uuidv1 } from "uuid";
 import useArrayInput from "./useArrayInput";
 
 export default function CreateRecipeForm() {
@@ -18,36 +17,44 @@ export default function CreateRecipeForm() {
 	};
 	const [state, formAction] = useActionState(createRecipe, initialState);
 
-	const [ingredientsInput, ingredientValues] = useArrayInput("ingredient");
-	const [stepsInput, stepValues] = useArrayInput("step");
+	const [ingredientsInput, ingredientValues] = useArrayInput(
+		"ingredient",
+		"ings-array",
+		[1, 50],
+		{ input: "w-[325px]" },
+	);
+	const [stepsInput, stepValues] = useArrayInput(
+		"step",
+		"steps-array",
+		[1, 100],
+		{
+			input: "w-[375px] gap-1",
+		},
+	);
 
 	return (
 		<form action={formAction}>
 			<div className="rounded-md border-[2px] border-gray-300 w-[65%] m-auto bg-gray-100 p-4 md:p-6">
-				{ingredientsInput}
-				<hr/>
-				{stepsInput}
-
-				{/* User Name */}
+				{/* Title */}
 				<div className="mb-4">
 					<label
-						htmlFor="name"
+						htmlFor="title"
 						className="mb-2 block text-sm font-medium"
 					>
-						Enter username
+						Enter title
 					</label>
 					<div className="relative">
 						<input
-							id="name"
-							name="name"
+							id="title"
+							name="title"
 							type="text"
-							placeholder="Enter username"
-							defaultValue={state.fields.get("name") as string}
-							className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-							aria-describedby="name-error"
+							placeholder="Recipe title"
+							defaultValue={state.fields.get("title") as string}
+							className="w-full rounded-md border border-gray-50 py-2 pl-10 text-sm outline-1 placeholder:text-gray-500 focus:outline-2"
+							aria-describedby="title-error"
 						/>
 					</div>
-					<div id="name-error" aria-live="polite" aria-atomic="true">
+					<div id="title-error" aria-live="polite" aria-atomic="true">
 						{state.errors?.title &&
 							state.errors.title.map((error: string) => (
 								<p
@@ -59,6 +66,42 @@ export default function CreateRecipeForm() {
 							))}
 					</div>
 				</div>
+
+				{/* Image */}
+				<div className="mb-4">
+					<label
+						htmlFor="image"
+						className="mb-2 block text-sm font-medium"
+					>
+						Enter image
+					</label>
+					<div className="relative">
+						<input
+							id="image"
+							name="image"
+							type="text"
+							placeholder="Recipe image"
+							defaultValue={state.fields.get("image") as string}
+							className="w-full rounded-md border border-gray-50 py-2 pl-10 text-sm outline-1 placeholder:text-gray-500 focus:outline-2"
+							aria-describedby="image-error"
+						/>
+					</div>
+					<div id="image-error" aria-live="polite" aria-atomic="true">
+						{state.errors?.image &&
+							state.errors.image.map((error: string) => (
+								<p
+									className="mt-2 text-sm text-red-500"
+									key={error}
+								>
+									{error}
+								</p>
+							))}
+					</div>
+				</div>
+				<hr />
+				{ingredientsInput}
+				<hr />
+				{stepsInput}
 
 				<p className="mt-2 text-sm text-red-500">{state.message}</p>
 				<div className="mt-6 -mb-2 flex justify-end gap-4">

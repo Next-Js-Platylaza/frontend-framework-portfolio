@@ -19,12 +19,16 @@ export type LinkStructure = {
 };
 
 export type InputAttributes = {
-	name: string;
+	id: string;
+	label: string;
 	type: string;
 	defaultValue?: string;
 	placeholder?: string;
 	minLength?: number;
 	maxLength?: number;
 	required?: boolean;
-	styles?: string;
+	removable?: boolean;
+	divStyles?: string;
+	inputStyles?: string;
+	removeButtonStyles?: string;
 };

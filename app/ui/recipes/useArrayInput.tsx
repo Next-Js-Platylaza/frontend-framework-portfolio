@@ -3,65 +3,95 @@ import { InputAttributes } from "@/app/lib/definitions";
 import { JSX, useEffect, useState } from "react";
 import { v1 as uuidv1 } from "uuid";
 
-export default function useArrayInput(label : string) {
-	const [items, setItems] = useState([NewItem("0")]);
-	const [itemIDs, setItemIDs] = useState(["0"]);
+interface ComponentClasses {
+	rootDiv?: string;
+	inputDivParent?: string;
+	inputDiv?: string;
+	input?: string;
+	addButton?: string;
+	removeButton?: string;
+}
+export default function useArrayInput(
+	label: string,
+	key: string,
+	inputMinMaxLength: [number, number],
+	classes?: ComponentClasses,
+) {
+	const firstID: string = key + "-first";
+	const [items, setItems] = useState([NewItem(firstID)]);
+	const [itemIDs, setItemIDs] = useState([firstID]);
 	const [itemIDToRemove, setItemIDToRemove] = useState("None");
 
-	useEffect(()=> {
+	useEffect(() => {
 		if (itemIDToRemove != "None") {
-			onRemoveItem(itemIDToRemove)
+			onRemoveItem(itemIDToRemove);
 		}
 	}, [itemIDToRemove]);
 
-	function NewItem(id : string)
-	{
+	function NewItem(id: string) {
 		return (
 			<ArrayInput
 				key={id}
 				attributes={{
-					name: id,
+					id: id,
+					label: label,
 					type: "text",
 					placeholder: `Enter ${label}`,
+					minLength: inputMinMaxLength[0],
+					maxLength: inputMinMaxLength[1],
+					required: true,
+					removable: id != firstID,
+					divStyles: classes?.inputDiv,
+					inputStyles: classes?.input,
+					removeButtonStyles: classes?.removeButton,
 				}}
 				removeComponent={() => {
 					setItemIDToRemove(id);
-			}}
+				}}
 			/>
 		);
 	}
 
 	function onAddItem() {
 		const uuid = uuidv1();
-		setItems([
-			...items,
-			NewItem(uuid),
-		]);
+		setItems([...items, NewItem(uuid)]);
 		setItemIDs([...itemIDs, uuid]);
 	}
 	function onRemoveItem(uuid: string) {
 		const index = itemIDs.indexOf(uuid);
-		setItems((items) => 
-			[...items.slice(0, index), ...items.slice(index+1)]
-		);
-		setItemIDs((itemIDs) => 
-			[...itemIDs.slice(0, index), ...itemIDs.slice(index+1)]
-		);
+		setItems((items) => [
+			...items.slice(0, index),
+			...items.slice(index + 1),
+		]);
+		setItemIDs((itemIDs) => [
+			...itemIDs.slice(0, index),
+			...itemIDs.slice(index + 1),
+		]);
 	}
-    const values : string[] = [];
+	const values: string[] = [];
 
-    return [(
-        <div>
-        {items.map((component) => (
-					<div key={component.props.attributes.name}>{component}</div>
-				))}
-				<button type="button" onClick={onAddItem}>
-					Add {label[0].toUpperCase() + label.substring(1).toLowerCase()}
-				</button>
-        </div>
-    ), values] as [JSX.Element, string[]];
+	return [
+		<div className={classes?.rootDiv} key={key}>
+			{items.map((component) => (
+				<div
+					className={classes?.inputDivParent}
+					key={component.props.attributes.id}
+				>
+					{component}
+				</div>
+			))}
+			<button
+				className={classes?.addButton}
+				type="button"
+				onClick={onAddItem}
+			>
+				Add {label[0].toUpperCase() + label.substring(1).toLowerCase()}
+			</button>
+		</div>,
+		values,
+	] as [JSX.Element, string[]];
 
-    //return [items, onAddItem] as [JSX.Element[], (() => void)];
+	//return [items, onAddItem] as [JSX.Element[], (() => void)];
 }
 
 function ArrayInput({
@@ -72,11 +102,15 @@ function ArrayInput({
 	removeComponent: (name: string) => void;
 }) {
 	return (
-		<div className={attributes?.styles}>
+		<div className={`${attributes?.divStyles} flex gap-3`}>
+			<label
+				htmlFor={attributes.id}
+				aria-label={`Input ${attributes.label}`}
+			/>
 			<input
-				className="w-[325px]"
-				id={attributes.name}
-				name={attributes.name}
+				className={attributes?.inputStyles}
+				id={attributes.id}
+				name={attributes.id}
 				type={attributes.type}
 				defaultValue={attributes?.defaultValue}
 				placeholder={attributes?.placeholder}
@@ -84,17 +118,17 @@ function ArrayInput({
 				maxLength={attributes?.maxLength}
 				required={attributes?.required}
 			/>
-			{attributes.name != "0" &&
-			<button
-				type="button"
-				onClick={() => {
-					removeComponent(attributes.name);
-				}}
-			>
-				Remove
-			</button>
-			}
-			
+			{attributes.removable && (
+				<button
+					className={attributes?.removeButtonStyles}
+					type="button"
+					onClick={() => {
+						removeComponent(attributes.id);
+					}}
+				>
+					Remove
+				</button>
+			)}
 		</div>
 	);
 }

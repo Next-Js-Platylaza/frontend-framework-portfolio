@@ -54,12 +54,12 @@ const AccountFormSchema = z.object({
 	id: z.string(),
 	name: z
 		.string({ error: "Please enter a username." })
-		.min(3, { error: "Username must contain more than 3 characters" })
+		.min(4, { error: "Username must contain more than 3 characters" })
 		.max(15, { error: "Username must be shorter than 16 characters" }),
 	email: z.email({ error: "Please input a valid email address." }),
 	password: z
 		.string({ error: "Please input a valid password." })
-		.min(5, { error: "Password must contain more than 5 characters" })
+		.min(5, { error: "Password must contain more than 4 characters" })
 		.max(25, { error: "Password must be less than 26 characters" }),
 });
 
@@ -141,21 +141,12 @@ export async function createUser(
 const RecipeFormSchema = z.object({
 	id: z.string(),
 	title: z
-		.string({ error: "Please enter a username." })
-		.min(3, { error: "Username must contain more than 3 characters" })
-		.max(15, { error: "Username must be shorter than 16 characters" }),
-	image: z
-		.string({ error: "Please input a valid password." })
-		.min(5, { error: "Password must contain more than 5 characters" })
-		.max(25, { error: "Password must be less than 26 characters" }),
-	ingredients: z
-		.string({ error: "Please input a valid password." })
-		.min(5, { error: "Password must contain more than 5 characters" })
-		.max(25, { error: "Password must be less than 26 characters" }),
-	steps: z
-		.string({ error: "Please input a valid password." })
-		.min(5, { error: "Password must contain more than 5 characters" })
-		.max(25, { error: "Password must be less than 26 characters" }),
+		.string({ error: "Please enter a title." })
+		.min(4, { error: "Title must contain more than 3 characters" })
+		.max(20, { error: "Title must be 20 characters or shorter" }),
+	image: z.string({ error: "No image input." }),
+	ingredients: z.array(z.string({ error: "Please input a valid password." })),
+	steps: z.array(z.string({ error: "Please input a valid password." })),
 });
 
 const CreateRecipe = RecipeFormSchema.omit({ id: true });
