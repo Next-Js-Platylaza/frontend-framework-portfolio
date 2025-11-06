@@ -8,6 +8,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import postgres from "postgres";
 import { v4 as uuidv4 } from "uuid";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
@@ -121,16 +122,19 @@ export async function createUser(
 	}
 
 	// Login the user
-	const signInFormData = new FormData();
-	signInFormData.set("email", "");
-	signInFormData.set("password", "");
-	
     try {
-		await signIn("credentials", signInFormData);
+		await signIn("credentials", formData);
 	} catch (error) {
+		if (isRedirectError(error))
+		{
+			const url : string = formData.get("redirectTo") as string ?? "/";
+
+			revalidatePath(url);
+			redirect(url);
+		}
 		return {
 			fields: formData,
-			message: "Account created, but failed to sign in.",
+			message: "Account created, but failed to sign in. | " + error,
 		};
 	}
 	

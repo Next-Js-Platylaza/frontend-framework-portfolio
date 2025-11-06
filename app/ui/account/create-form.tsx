@@ -2,12 +2,16 @@
 import Link from "next/link";
 import { createUser, AccountFormState } from "@/app/lib/actions";
 import { useActionState, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 export default function CreateAccountForm() {
 	const initialFormData = new FormData();
 	initialFormData.set("name", "");
 	initialFormData.set("email", "");
 	initialFormData.set("password", "");
+
+	const searchParams = useSearchParams();
+	const callbackUrl = searchParams.get("callbackUrl") ?? "/";
 
 	const initialState: AccountFormState = {
 		fields: initialFormData,
@@ -132,6 +136,8 @@ export default function CreateAccountForm() {
 
 				<p className="mt-2 text-sm text-red-500">{state.message}</p>
 				<hr className="mt-[25px] mb-[15px]" />
+				<input type="hidden" name="redirectTo" value={callbackUrl} />
+
 				<div className="flex justify-end gap-4">
 					<Link
 						href="/"
@@ -150,7 +156,7 @@ export default function CreateAccountForm() {
 					Already have an account?{" "}
 					<Link
 						className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600"
-						href="/account/login"
+						href={`/account/login` + (callbackUrl != "/" ? `?callbackUrl=${callbackUrl}}` : "")}
 					>
 						Login here!
 					</Link>
