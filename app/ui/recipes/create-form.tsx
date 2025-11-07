@@ -17,22 +17,28 @@ export default function CreateRecipeForm() {
 	};
 	const [state, formAction] = useActionState(createRecipe, initialState);
 
-	const [ingredientsInput, ingredientValues, onSubmitFormIng] = useArrayInput(
+	const [ingredientsInput, refillInputsIngredients] = useArrayInput(
 		"ingredient",
 		"ings-array",
-		[1, 50],
+		state.fields.getAll("ingredients") as string[],
 		{ input: "w-[325px]" },
-		state.fields.getAll("ingredients") as string[]
+		[1, 50],
 	);
-	const [stepsInput, stepValues, onSubmitFormStep] = useArrayInput(
+	const [stepsInput, refillInputsSteps] = useArrayInput(
 		"step",
 		"steps-array",
-		[1, 100],
+		state.fields.getAll("steps") as string[],
 		{
 			input: "w-[375px] gap-1",
 		},
-		state.fields.getAll("steps") as string[]
+		[1, 100],
 	);
+
+	// Refill input after form submission
+	useEffect(() => {
+		refillInputsIngredients();
+		refillInputsSteps();
+	}, [state.errors]);
 
 	return (
 		<form action={formAction}>
@@ -117,10 +123,6 @@ export default function CreateRecipeForm() {
 					</Link>
 					<button
 						type="submit"
-						onClick={()=>{
-							onSubmitFormIng()
-							onSubmitFormStep()
-						}}
 						className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
 					>
 						Create Recipe

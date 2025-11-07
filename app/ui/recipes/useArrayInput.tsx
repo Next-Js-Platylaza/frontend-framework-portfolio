@@ -15,9 +15,9 @@ interface ComponentClasses {
 export default function useArrayInput(
 	label: string,
 	key: string,
-	inputMinMaxLength: [number, number],
+	defaultValues: string[],
 	classes?: ComponentClasses,
-	defaultValues?: string[],
+	inputMinMaxLength: [number, number] = [1, 5],
 ) {
 	const firstID: string = key + "-first";
 	const [items, setItems] = useState([NewItem(firstID)]);
@@ -31,16 +31,17 @@ export default function useArrayInput(
 	}, [itemIDToRemove]);
 
 	function onSubmitForm() {
-		let newItems : JSX.Element[] = [];
-		let newItemIDs : string[] = [];
+		if (!defaultValues || defaultValues.length <= 0) return;
 
-		console.log(defaultValues);
-		defaultValues?.forEach(value => {
-			const id: string = uuidv1();
-			console.log(id);
-			console.log(value);
+		let newItems: JSX.Element[] = [];
+		let newItemIDs: string[] = [];
+
+		let isFirst: boolean = true;
+		defaultValues?.forEach((value) => {
+			const id: string = isFirst ? firstID : uuidv1();
 			newItems = [...newItems, NewItem(id, value)];
 			newItemIDs = [...newItemIDs, id];
+			isFirst = false;
 		});
 
 		setItems(newItems);
@@ -55,8 +56,7 @@ export default function useArrayInput(
 					id: id,
 					label: label,
 					type: "text",
-					defaultValue:
-						defaultValue,
+					defaultValue: defaultValue,
 					placeholder: `Enter ${label}`,
 					minLength: inputMinMaxLength[0],
 					maxLength: inputMinMaxLength[1],
@@ -89,16 +89,15 @@ export default function useArrayInput(
 			...itemIDs.slice(index + 1),
 		]);
 	}
-	const values: string[] = [];
 
 	return [
 		<div className={classes?.rootDiv} key={key}>
-			{items.map((component) => (
+			{items.map((inputArray) => (
 				<div
 					className={classes?.inputDivParent}
-					key={component.props.attributes.id}
+					key={inputArray.props.attributes.id}
 				>
-					{component}
+					{inputArray}
 				</div>
 			))}
 			<button
@@ -109,9 +108,8 @@ export default function useArrayInput(
 				Add {label[0].toUpperCase() + label.substring(1).toLowerCase()}
 			</button>
 		</div>,
-		values,
-		onSubmitForm
-	] as [JSX.Element, string[], (() => void) ];
+		onSubmitForm,
+	] as [JSX.Element, () => void];
 
 	//return [items, onAddItem] as [JSX.Element[], (() => void)];
 }
