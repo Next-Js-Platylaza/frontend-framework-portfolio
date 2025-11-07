@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { createRecipe, RecipeFormState } from "@/app/lib/actions";
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useActionState, useEffect } from "react";
 import useArrayInput from "./useArrayInput";
 
 export default function CreateRecipeForm() {
@@ -17,24 +17,32 @@ export default function CreateRecipeForm() {
 	};
 	const [state, formAction] = useActionState(createRecipe, initialState);
 
+	const arrayInputStyles = {
+		input: "w-[425px]",
+		fieldset: "border border-gray-400 px-3 pt-1 pb-3 mt-2 mb-3 rounded-md",
+		legend: "px-4 text-lg font-semibold text-gray-700",
+		addButton:
+			"py-1 px-3 mt-2 rounded-lg bg-gray-200 text-sm text-gray-900 transition-colors hover:bg-gray-300",
+		removeButton:
+			"py-1 px-2 ml-auto mr-4 mt-1 rounded-lg bg-gray-200 text-sm text-gray-900 transition-colors hover:bg-gray-300",
+	};
+
 	const [ingredientsInput, refillInputsIngredients] = useArrayInput(
 		"ingredient",
-		"ings-array",
+		"ingredients-array",
 		state.fields.getAll("ingredients") as string[],
-		{ input: "w-[325px]" },
+		arrayInputStyles,
 		[1, 50],
 	);
 	const [stepsInput, refillInputsSteps] = useArrayInput(
 		"step",
 		"steps-array",
 		state.fields.getAll("steps") as string[],
-		{
-			input: "w-[375px] gap-1",
-		},
+		arrayInputStyles,
 		[1, 100],
 	);
 
-	// Refill input after form submission
+	// Refill inputs with their values after form submission (because form submission clears all inputs)
 	useEffect(() => {
 		refillInputsIngredients();
 		refillInputsSteps();

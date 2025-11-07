@@ -1,17 +1,16 @@
 "use client";
 import { InputAttributes } from "@/app/lib/definitions";
-import { JSX, useEffect, useRef, useState } from "react";
-import { JsxElement } from "typescript";
-import { v1 as uuidv1 } from "uuid";
+import { JSX, useEffect, useState } from "react";
+import { v1 as generateV1Uuid } from "uuid";
 
-interface ComponentClasses {
+type ComponentClasses = {
 	rootDiv?: string;
-	inputDivParent?: string;
-	inputDiv?: string;
+	fieldset?: string;
+	legend?: string;
 	input?: string;
 	addButton?: string;
 	removeButton?: string;
-}
+};
 export default function useArrayInput(
 	label: string,
 	key: string,
@@ -30,22 +29,8 @@ export default function useArrayInput(
 		}
 	}, [itemIDToRemove]);
 
-	function onSubmitForm() {
-		if (!defaultValues || defaultValues.length <= 0) return;
-
-		let newItems: JSX.Element[] = [];
-		let newItemIDs: string[] = [];
-
-		let isFirst: boolean = true;
-		defaultValues?.forEach((value) => {
-			const id: string = isFirst ? firstID : uuidv1();
-			newItems = [...newItems, NewItem(id, value)];
-			newItemIDs = [...newItemIDs, id];
-			isFirst = false;
-		});
-
-		setItems(newItems);
-		setItemIDs(newItemIDs);
+	function getCapitalizedLabel() {
+		return label[0].toUpperCase() + label.substring(1).toLowerCase();
 	}
 
 	function NewItem(id: string, defaultValue?: string) {
@@ -62,7 +47,6 @@ export default function useArrayInput(
 					maxLength: inputMinMaxLength[1],
 					required: true,
 					removable: id != firstID,
-					divStyles: classes?.inputDiv,
 					inputStyles: classes?.input,
 					removeButtonStyles: classes?.removeButton,
 				}}
@@ -74,7 +58,7 @@ export default function useArrayInput(
 	}
 
 	function onAddItem() {
-		const uuid = uuidv1();
+		const uuid = generateV1Uuid();
 		setItems([...items, NewItem(uuid)]);
 		setItemIDs([...itemIDs, uuid]);
 	}
@@ -90,28 +74,44 @@ export default function useArrayInput(
 		]);
 	}
 
+	function refillInputs() {
+		if (!defaultValues || defaultValues.length <= 0) return;
+
+		let newItems: JSX.Element[] = [];
+		let newItemIDs: string[] = [];
+
+		let isFirst: boolean = true;
+		defaultValues?.forEach((value) => {
+			const id: string = isFirst ? firstID : generateV1Uuid();
+			newItems = [...newItems, NewItem(id, value)];
+			newItemIDs = [...newItemIDs, id];
+			isFirst = false;
+		});
+
+		setItems(newItems);
+		setItemIDs(newItemIDs);
+	}
+
 	return [
 		<div className={classes?.rootDiv} key={key}>
-			{items.map((inputArray) => (
-				<div
-					className={classes?.inputDivParent}
-					key={inputArray.props.attributes.id}
+			<fieldset className={classes?.fieldset}>
+				<legend className={classes?.legend}>
+					{`${getCapitalizedLabel()}s`}
+				</legend>
+				{items.map((inputArray) => (
+					<div key={inputArray.props.attributes.id}>{inputArray}</div>
+				))}
+				<button
+					className={classes?.addButton}
+					type="button"
+					onClick={onAddItem}
 				>
-					{inputArray}
-				</div>
-			))}
-			<button
-				className={classes?.addButton}
-				type="button"
-				onClick={onAddItem}
-			>
-				Add {label[0].toUpperCase() + label.substring(1).toLowerCase()}
-			</button>
+					Add {getCapitalizedLabel()}
+				</button>
+			</fieldset>
 		</div>,
-		onSubmitForm,
+		refillInputs,
 	] as [JSX.Element, () => void];
-
-	//return [items, onAddItem] as [JSX.Element[], (() => void)];
 }
 
 function ArrayInput({
@@ -122,7 +122,7 @@ function ArrayInput({
 	removeComponent: (name: string) => void;
 }) {
 	return (
-		<div className={`${attributes?.divStyles} flex gap-3`}>
+		<div className="flex gap-7">
 			<label
 				htmlFor={attributes.id}
 				aria-label={`Input ${attributes.label}`}

@@ -28,7 +28,7 @@ export type InputAttributes = {
 	maxLength?: number;
 	required?: boolean;
 	removable?: boolean;
-	divStyles?: string;
+	inputDivStyles?: string;
 	inputStyles?: string;
 	removeButtonStyles?: string;
 };
