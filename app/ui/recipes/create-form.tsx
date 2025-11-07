@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { createRecipe, RecipeFormState } from "@/app/lib/actions";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import useArrayInput from "./useArrayInput";
 
 export default function CreateRecipeForm() {
@@ -17,20 +17,21 @@ export default function CreateRecipeForm() {
 	};
 	const [state, formAction] = useActionState(createRecipe, initialState);
 
-	const [ingredientsInput, ingredientValues] = useArrayInput(
+	const [ingredientsInput, ingredientValues, onSubmitFormIng] = useArrayInput(
 		"ingredient",
 		"ings-array",
 		[1, 50],
 		{ input: "w-[325px]" },
-		//state.fields.get("ingredient")
+		state.fields.getAll("ingredients") as string[]
 	);
-	const [stepsInput, stepValues] = useArrayInput(
+	const [stepsInput, stepValues, onSubmitFormStep] = useArrayInput(
 		"step",
 		"steps-array",
 		[1, 100],
 		{
 			input: "w-[375px] gap-1",
 		},
+		state.fields.getAll("steps") as string[]
 	);
 
 	return (
@@ -116,6 +117,10 @@ export default function CreateRecipeForm() {
 					</Link>
 					<button
 						type="submit"
+						onClick={()=>{
+							onSubmitFormIng()
+							onSubmitFormStep()
+						}}
 						className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
 					>
 						Create Recipe

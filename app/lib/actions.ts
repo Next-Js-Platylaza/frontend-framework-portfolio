@@ -1,6 +1,6 @@
 "use server";
 import { Recipe } from "./definitions";
-import { signIn } from "@/auth";
+import { getCurrentUserId, signIn } from "@/auth";
 import { AuthError } from "next-auth";
 import { z } from "zod";
 import bcrypt from "bcrypt";
@@ -170,8 +170,8 @@ export async function createRecipe(
 	const validatedFields = CreateRecipe.safeParse({
 		title: formData.get("title"),
 		image: formData.get("image"),
-		ingredients: formData.get("ingredients"),
-		steps: formData.get("steps"),
+		ingredients: formData.getAll("ingredients"),
+		steps: formData.getAll("steps"),
 	});
 
 	// If form validation fails, return errors early. Otherwise, continue.
@@ -184,14 +184,15 @@ export async function createRecipe(
 	}
 
 	// Prepare data for insertion into the database
-	let uuid = uuidv4();
+	const uuid = uuidv4();
+	const user_id = await getCurrentUserId() ?? "Failed To Get UserID.";
 
 	const { title, image, ingredients, steps } = validatedFields.data;
 	// Insert data into the database
 	try {
 		await sql`
-			INSERT INTO recipes (id, title, image, ingredients, steps)
-			VALUES (${uuid}, ${title}, ${image}, ${ingredients}, ${steps})
+			INSERT INTO recipes (id, title, image, ingredients, steps, user_id)
+			VALUES (${uuid}, ${title}, ${image}, ${ingredients}, ${steps}, ${user_id})
 		  `;
 	} catch (error) {
 		// If a database error occurs, return a more specific error.

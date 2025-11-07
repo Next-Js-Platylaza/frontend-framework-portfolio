@@ -1,6 +1,7 @@
 "use client";
 import { InputAttributes } from "@/app/lib/definitions";
-import { JSX, useEffect, useState } from "react";
+import { JSX, useEffect, useRef, useState } from "react";
+import { JsxElement } from "typescript";
 import { v1 as uuidv1 } from "uuid";
 
 interface ComponentClasses {
@@ -16,7 +17,7 @@ export default function useArrayInput(
 	key: string,
 	inputMinMaxLength: [number, number],
 	classes?: ComponentClasses,
-	defaultValues?: string[] | null,
+	defaultValues?: string[],
 ) {
 	const firstID: string = key + "-first";
 	const [items, setItems] = useState([NewItem(firstID)]);
@@ -29,7 +30,24 @@ export default function useArrayInput(
 		}
 	}, [itemIDToRemove]);
 
-	function NewItem(id: string) {
+	function onSubmitForm() {
+		let newItems : JSX.Element[] = [];
+		let newItemIDs : string[] = [];
+
+		console.log(defaultValues);
+		defaultValues?.forEach(value => {
+			const id: string = uuidv1();
+			console.log(id);
+			console.log(value);
+			newItems = [...newItems, NewItem(id, value)];
+			newItemIDs = [...newItemIDs, id];
+		});
+
+		setItems(newItems);
+		setItemIDs(newItemIDs);
+	}
+
+	function NewItem(id: string, defaultValue?: string) {
 		return (
 			<ArrayInput
 				key={id}
@@ -38,7 +56,7 @@ export default function useArrayInput(
 					label: label,
 					type: "text",
 					defaultValue:
-						id != firstID ? getDefaultValue(id) : undefined,
+						defaultValue,
 					placeholder: `Enter ${label}`,
 					minLength: inputMinMaxLength[0],
 					maxLength: inputMinMaxLength[1],
@@ -53,12 +71,6 @@ export default function useArrayInput(
 				}}
 			/>
 		);
-	}
-
-	function getDefaultValue(id: string) {
-		if (!defaultValues || !items || items.length <= 0) return undefined;
-
-		return defaultValues[itemIDs.indexOf(id)];
 	}
 
 	function onAddItem() {
@@ -98,7 +110,8 @@ export default function useArrayInput(
 			</button>
 		</div>,
 		values,
-	] as [JSX.Element, string[]];
+		onSubmitForm
+	] as [JSX.Element, string[], (() => void) ];
 
 	//return [items, onAddItem] as [JSX.Element[], (() => void)];
 }
@@ -119,9 +132,9 @@ function ArrayInput({
 			<input
 				className={attributes?.inputStyles}
 				id={`${attributes.label}${attributes.id}`}
-				name={`${attributes.label}[]`}
+				name={`${attributes.label}s`}
 				type={attributes.type}
-				defaultValue={attributes?.defaultValue}
+				defaultValue={attributes.defaultValue}
 				placeholder={attributes?.placeholder}
 				minLength={attributes?.minLength}
 				maxLength={attributes?.maxLength}
