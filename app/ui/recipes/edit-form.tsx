@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { editRecipe, RecipeFormState } from "@/app/lib/actions";
+import { editRecipe, deleteRecipe, RecipeFormState } from "@/app/lib/actions";
 import { useActionState, useEffect } from "react";
 import useArrayInput from "./useArrayInput";
 import { Recipe } from "@/app/lib/definitions";
