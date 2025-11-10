@@ -11,6 +11,8 @@ export type Recipe = {
 	ingredients: string[];
 	steps: string[];
 	user_id: string;
+	date: Date;
+	edit_date: Date;
 };
 
 export type LinkStructure = {

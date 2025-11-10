@@ -91,7 +91,7 @@ export async function createUser(
 		return {
 			fields: formData,
 			errors: validatedFields.error.flatten().fieldErrors,
-			message: "Missing Fields. Failed to Create User.",
+			message: "Missing Fields. Failed to create account.",
 		};
 	}
 
@@ -139,7 +139,7 @@ export async function createUser(
 }
 
 const RecipeFormSchema = z.object({
-	id: z.string(),
+	id: z.uuid(),
 	title: z
 		.string({ error: "Please enter a title." })
 		.min(4, { error: "Title must contain more than 3 characters" })
@@ -147,9 +147,11 @@ const RecipeFormSchema = z.object({
 	image: z.httpUrl({ error: "Please enter a valid url." }),
 	ingredients: z.array(z.string({ error: "Please input a valid password." })),
 	steps: z.array(z.string({ error: "Please input a valid password." })),
+	date: z.string(),
 });
 
 const CreateRecipe = RecipeFormSchema.omit({ id: true });
+const UpdateRecipe = RecipeFormSchema.omit({});
 
 export type RecipeFormState = {
 	fields: FormData;
@@ -168,10 +170,12 @@ export async function createRecipe(
 ) {
 	// Validate form using Zod
 	const validatedFields = CreateRecipe.safeParse({
+		id: formData.get("id"),
 		title: formData.get("title"),
 		image: formData.get("image"),
 		ingredients: formData.getAll("ingredients"),
 		steps: formData.getAll("steps"),
+		date: formData.get("date"),
 	});
 
 	// If form validation fails, return errors early. Otherwise, continue.
@@ -179,7 +183,7 @@ export async function createRecipe(
 		return {
 			fields: formData,
 			errors: validatedFields.error.flatten().fieldErrors,
-			message: "Missing Fields. Failed to Create Recipe.",
+			message: "Missing fields. Failed to create recipe.",
 		};
 	}
 
@@ -187,23 +191,77 @@ export async function createRecipe(
 	const uuid = uuidv4();
 	const user_id = await getCurrentUserId() ?? "Failed To Get UserID.";
 
-	const { title, image, ingredients, steps } = validatedFields.data;
+	const { title, image, ingredients, steps, date } = validatedFields.data;
 	// Insert data into the database
 	try {
 		await sql`
-			INSERT INTO recipes (id, title, image, ingredients, steps, user_id)
-			VALUES (${uuid}, ${title}, ${image}, ${ingredients}, ${steps}, ${user_id})
+			INSERT INTO recipes (id, title, image, ingredients, steps, user_id, date, edit_date)
+			VALUES (${uuid}, ${title}, ${image}, ${ingredients}, ${steps}, ${user_id}, ${date}, ${date})
 		  `;
 	} catch (error) {
 		// If a database error occurs, return a more specific error.
 		return {
 			fields: formData,
 			message:
-				"Database Error: Failed to Create Recipe. | Error: " + error,
+				"Database Error: Failed to create recipe. | Error: " + error,
 		};
 	}
+
+	return {
+			fields: formData,
+			message:
+				"Remove this you silly goose. | Date: " + date,
+		};
 
 	// Revalidate the cache for the recipes page and redirect the user.
 	revalidatePath(`/recipes/${uuid}/view`);
 	redirect(`/recipes/${uuid}/view`);
+}
+
+export async function editRecipe(
+	prevState: RecipeFormState | undefined,
+	formData: FormData,
+) {
+	// Validate form using Zod
+	const validatedFields = UpdateRecipe.safeParse({
+		id: formData.get("id"),
+		title: formData.get("title"),
+		image: formData.get("image"),
+		ingredients: formData.getAll("ingredients"),
+		steps: formData.getAll("steps"),
+		user_id: formData.get("user_id"),
+		date: formData.get("date"),
+	});
+
+	// If form validation fails, return errors early. Otherwise, continue.
+	if (!validatedFields.success) {
+		return {
+			fields: formData,
+			errors: validatedFields.error.flatten().fieldErrors,
+			message: "Missing Fields. Failed to update recipe.",
+		};
+	}
+
+	// Prepare data for insertion into the database
+
+	const { id, title, image, ingredients, steps, date } = validatedFields.data;
+	// Insert data into the database
+	try {
+		await sql`
+			UPDATE recipes 
+			SET title = ${title}, image = ${image}, ingredients = ${ingredients}, steps = ${steps}, edit_date = ${date}
+			WHERE id = ${id};
+		  `;
+	} catch (error) {
+		// If a database error occurs, return a more specific error.
+		return {
+			fields: formData,
+			message:
+				"Database Error: Failed to update recipe. | Error: " + error,
+		};
+	}
+
+	// Revalidate the cache for the recipes page and redirect the user.
+	revalidatePath(`/recipes/${id}/view`);
+	redirect(`/recipes/${id}/view`);
 }

@@ -3,7 +3,7 @@ import { InputAttributes } from "@/app/lib/definitions";
 import { JSX, useEffect, useState } from "react";
 import { v1 as generateV1Uuid } from "uuid";
 
-type ComponentClasses = {
+type ComponentStyles = {
 	rootDiv?: string;
 	fieldset?: string;
 	legend?: string;
@@ -11,12 +11,12 @@ type ComponentClasses = {
 	addButton?: string;
 	removeButton?: string;
 };
-export default function useArrayInput(
+export default function useArrayInput( {label, key, defaultValues, styles, inputMinMaxLength = [1, 5]}: {
 	label: string,
 	key: string,
 	defaultValues: string[],
-	classes?: ComponentClasses,
-	inputMinMaxLength: [number, number] = [1, 5],
+	styles?: ComponentStyles,
+	inputMinMaxLength: [number, number],}
 ) {
 	const firstID: string = key + "-first";
 	const [items, setItems] = useState([NewItem(firstID)]);
@@ -47,8 +47,8 @@ export default function useArrayInput(
 					maxLength: inputMinMaxLength[1],
 					required: true,
 					removable: id != firstID,
-					inputStyles: classes?.input,
-					removeButtonStyles: classes?.removeButton,
+					inputStyles: styles?.input,
+					removeButtonStyles: styles?.removeButton,
 				}}
 				removeComponent={() => {
 					setItemIDToRemove(id);
@@ -93,16 +93,16 @@ export default function useArrayInput(
 	}
 
 	return [
-		<div className={classes?.rootDiv} key={key}>
-			<fieldset className={classes?.fieldset}>
-				<legend className={classes?.legend}>
+		<div className={styles?.rootDiv} key={key}>
+			<fieldset className={styles?.fieldset}>
+				<legend className={styles?.legend}>
 					{`${getCapitalizedLabel()}s`}
 				</legend>
 				{items.map((inputArray) => (
 					<div key={inputArray.props.attributes.id}>{inputArray}</div>
 				))}
 				<button
-					className={classes?.addButton}
+					className={styles?.addButton}
 					type="button"
 					onClick={onAddItem}
 				>

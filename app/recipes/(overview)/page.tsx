@@ -28,9 +28,7 @@ export default async function Page(props: {
 			{recipes?.map((recipe) => {
 				return (
 					<div key={recipe.id}>
-						<br />
 						<RecipeCard recipe={recipe} />
-						<br />
 						<hr />
 					</div>
 				);

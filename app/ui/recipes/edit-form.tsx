@@ -1,57 +1,59 @@
 "use client";
 import Link from "next/link";
-import { createRecipe, RecipeFormState } from "@/app/lib/actions";
+import { editRecipe, RecipeFormState } from "@/app/lib/actions";
 import { useActionState, useEffect } from "react";
 import useArrayInput from "./useArrayInput";
+import { Recipe } from "@/app/lib/definitions";
 import { formatDate } from "@/app/lib/util";
 
-export default function CreateRecipeForm() {
+export default function EditRecipeForm({recipe} : {recipe: Recipe}) {
 	const initialFormData = new FormData();
-	initialFormData.set("id", "");
-	initialFormData.set("title", "");
-	initialFormData.set("image", "");
-	initialFormData.append("ingredients", "");
-	initialFormData.append("steps", "");
-	initialFormData.set("user_id", "")
+	initialFormData.set("id", recipe.id);
+	initialFormData.set("title", recipe.title);
+	initialFormData.set("image", recipe.image);
+	recipe.ingredients.forEach(ingredient => {
+		initialFormData.append(`ingredients`, ingredient)
+	});
+	recipe.steps.forEach(step => {
+		initialFormData.append(`steps`, step)
+	});
 
-	const [state, formAction] = useActionState(createRecipe, {
-			fields: initialFormData,
-			message: null,
-			errors: {},
-		} as RecipeFormState);
-	
-		const arrayInputStyles = {
-			input: "w-[425px]",
-			fieldset: "border border-gray-400 px-3 pt-1 pb-3 mt-2 mb-3 rounded-md",
-			legend: "px-4 text-lg font-semibold text-gray-700",
-			addButton:
-				"py-1 px-3 mt-2 rounded-lg bg-gray-200 text-sm text-gray-900 transition-colors hover:bg-gray-300",
-			removeButton:
-				"py-1 px-2 ml-auto mr-4 mt-1 rounded-lg bg-gray-200 text-sm text-gray-900 transition-colors hover:bg-gray-300",
-		};
-	
-		const [ingredientsInput, refillInputs_Ingredients] = useArrayInput({
-			label: "ingredient",
-			key: "ingredients-array",
-			defaultValues: state.fields.getAll("ingredients") as string[],
-			styles: arrayInputStyles,
-			inputMinMaxLength: [1, 50],}
-		);
-		const [stepsInput, refillInputs_Steps] = useArrayInput({
-			label: "step",
-			key: "steps-array",
-			defaultValues: state.fields.getAll("steps") as string[],
-			styles: arrayInputStyles,
-			inputMinMaxLength: [1, 100],}
-		);
-	
-		console.log(formatDate(new Date(), "y-mm-dd hh:ii:ss"));
+	const [state, formAction] = useActionState(editRecipe, {
+		fields: initialFormData,
+		message: null,
+		errors: {},
+	} as RecipeFormState);
 
-		// Refill inputs with their values after form submission (because form submission clears all inputs)
-		useEffect(() => {
-			refillInputs_Ingredients();
-			refillInputs_Steps();
-		}, [state.errors]);
+	const arrayInputStyles = {
+		input: "w-[425px]",
+		fieldset: "border border-gray-400 px-3 pt-1 pb-3 mt-2 mb-3 rounded-md",
+		legend: "px-4 text-lg font-semibold text-gray-700",
+		addButton:
+			"py-1 px-3 mt-2 rounded-lg bg-gray-200 text-sm text-gray-900 transition-colors hover:bg-gray-300",
+		removeButton:
+			"py-1 px-2 ml-auto mr-4 mt-1 rounded-lg bg-gray-200 text-sm text-gray-900 transition-colors hover:bg-gray-300",
+	};
+
+	const [ingredientsInput, refillInputs_Ingredients] = useArrayInput({
+		label: "ingredient",
+		key: "ingredients-array",
+		defaultValues: state.fields.getAll("ingredients") as string[],
+		styles: arrayInputStyles,
+		inputMinMaxLength: [1, 50],}
+	);
+	const [stepsInput, refillInputs_Steps] = useArrayInput({
+		label: "step",
+		key: "steps-array",
+		defaultValues: state.fields.getAll("steps") as string[],
+		styles: arrayInputStyles,
+		inputMinMaxLength: [1, 100],}
+	);
+
+	// Refill inputs with their values after form submission (because form submission clears all inputs)
+	useEffect(() => {
+		refillInputs_Ingredients();
+		refillInputs_Steps();
+	}, [state.errors]);
 
 	return (
 		<form action={formAction}>
@@ -127,8 +129,8 @@ export default function CreateRecipeForm() {
 				{stepsInput}
 
 				<p className="mt-2 text-sm text-red-500">{state.message}</p>
+				<input type="hidden" name="id" value={state.fields.get("id") as string} />
 				<input type="hidden" name="date" value={formatDate(new Date(), "y-mm-dd hh:ii:ss")} />
-				
 
 				<div className="mt-6 -mb-2 flex justify-end gap-4">
 					<Link
@@ -141,7 +143,7 @@ export default function CreateRecipeForm() {
 						type="submit"
 						className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
 					>
-						Create Recipe
+						Save Changes
 					</button>
 				</div>
 			</div>
