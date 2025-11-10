@@ -268,14 +268,12 @@ export async function editRecipe(
 
 export async function deleteRecipe(id: string) {
 	try {
-		const recipes = await sql`
+		await sql`
             DELETE
             FROM recipes
 			WHERE id = ${id} AND user_id = ${getCurrentUserId()}
             LIMIT 1;
         `;
-
-		return true;
 	} catch (err) {
 		console.error("Database Error:", err);
 		throw new Error("Failed to delete user's recipe.");
