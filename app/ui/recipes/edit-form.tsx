@@ -135,8 +135,8 @@ export default function EditRecipeForm({recipe} : {recipe: Recipe}) {
 				<div className="mt-6 -mb-2 flex gap-4">
 				    <button
 						type="button"
-						onClick={()=>{
-							deleteRecipe(recipe.id);
+						onClick={async ()=>{
+							await deleteRecipe(recipe.id);
 						}}
 						className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
 					>
