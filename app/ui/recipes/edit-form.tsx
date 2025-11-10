@@ -132,7 +132,17 @@ export default function EditRecipeForm({recipe} : {recipe: Recipe}) {
 				<p className="mt-2 text-sm text-red-500">{state.message}</p>
 				<input type="hidden" name="id" value={state.fields.get("id") as string} />
 				<input type="hidden" name="date" value={formatDate(new Date(), "y-mm-dd hh:ii:ss")} />
-
+				<div className="mt-6 -mb-2 flex gap-4">
+				    <button
+						type="button"
+						onClick={()=>{
+							deleteRecipe(recipe.id);
+						}}
+						className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
+					>
+					Delete Recipe
+					</button>
+				</div>
 				<div className="mt-6 -mb-2 flex justify-end gap-4">
 					<Link
 						href="/recipes"
