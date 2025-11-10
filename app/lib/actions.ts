@@ -258,6 +258,7 @@ export async function editRecipe(
 			fields: formData,
 			message:
 				"Database Error: Failed to update recipe.",
+		}
 	}
 
 	// Revalidate the cache for the recipes page and redirect the user.
