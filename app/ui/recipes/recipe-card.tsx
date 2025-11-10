@@ -8,7 +8,7 @@ export default function RecipeCard({recipe}:{recipe : Recipe}) {
 	const wasEdited = recipe.edit_date?.toDateString() != recipe.date?.toDateString();
 
 	return (
-       <div className="w-[60%] bg-gray-100 border-gray-300 border-5 py-2 px-3 my-3">
+       <div className="min-w-[425px]  bg-gray-100 border-gray-300 border-5 py-2 px-3 m-3">
 			<div className="flex">
 				<Link
             		href={`/recipes/${recipe.id}/view`}
@@ -18,13 +18,13 @@ export default function RecipeCard({recipe}:{recipe : Recipe}) {
 						<Image src={recipe.image} alt="Recipe Thumbnail" width={100} height={100} className="max-w-[100px] max-h-[100px] w-auto h-auto m-auto"/>
 					</div>
 					<div className="mr-6 pl-4">
-						<h1 className="text-nowrap text-lg mb-3">- {recipe.title}</h1>
+						<h1 className="line-clamp-2 text-lg mb-3 max-md:text-sm">- {recipe.title}</h1>
 						<li className="mt-2">{recipe.ingredients.length} Ingredient{recipe.ingredients.length != 1 ? "s" : ""}</li>
 						<li className="mt-3">{recipe.steps.length} Step{recipe.steps.length != 1 ? "s" : ""}</li>
 					</div>
 				</Link>
 				<div className="flex ml-auto">
-					<div className="">
+					<div>
 						<h4 className="text-nowrap">Created: {recipe.date ? formatDate(recipe.date, "m-d-y") : "???"}</h4>
 						{ wasEdited &&
 						<h4 className="text-nowrap text-sm">Edited: {recipe.edit_date ? formatDate(recipe.edit_date, "m-d-y") : "???"}</h4>

@@ -1,10 +1,10 @@
-"use client";
 import Link from "next/link";
 import SearchBar from "./searchbar";
 import { Suspense } from "react";
 
-export default function Subbar() {
+export default async function Subbar() {
 	//href={`${pathName}?searchbar=`}
+
 	return (
 		<div className="flex w-full max-w-[700px] min-w-[10px] bg-gray-400 m-auto px-2 pb-2 pt-1">
 			<div className="mr-auto">
@@ -23,7 +23,7 @@ export default function Subbar() {
 			</div>
 			<div className="flex w-full ml-auto max-md:w-[500px]">
 				<Suspense>
-					<SearchBar placeholder={""} />
+					<SearchBar placeholder={"Search..."} />
 				</Suspense>
 			</div>
 		</div>

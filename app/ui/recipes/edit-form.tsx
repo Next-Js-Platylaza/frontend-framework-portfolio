@@ -127,6 +127,7 @@ export default function EditRecipeForm({recipe} : {recipe: Recipe}) {
 				{ingredientsInput}
 				<hr />
 				{stepsInput}
+				<hr />
 
 				<p className="mt-2 text-sm text-red-500">{state.message}</p>
 				<input type="hidden" name="id" value={state.fields.get("id") as string} />

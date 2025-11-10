@@ -1,5 +1,6 @@
-import postgres from "postgres";
+import postgres, { RowList } from "postgres";
 import { User, Recipe } from "./definitions";
+import { getCurrentUserId } from "@/auth";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
@@ -85,21 +86,21 @@ export async function fetchRecipesByUser(userId: string) {
 	}
 }
 
-const ITEMS_PER_PAGE = 10;
-export async function fetchRecipesPages(query: string, userId: string) {
+export async function fetchRecipesPages(query: string, itemsPerPage : number) {
+	const userId = await getCurrentUserId() ?? "Failed To Fetch UserID";
 	try {
-		const data = await sql`SELECT COUNT(*)
-    FROM recipes
-    WHERE
-      title ILIKE ${`%${query}%`} OR
-      date::text ILIKE ${`%${query}%`}
-	  AND user_id = ${userId}
-  `;
+		const recipes = await sql<Recipe[]>`
+			SELECT *
+    		FROM recipes
+    		WHERE
+      			title ILIKE ${`%${query}%`} OR
+      			date::text ILIKE ${`%${query}%`}
+	  			AND user_id = ${userId}
+  		`;
 
-		const totalPages = Math.ceil(Number(data[0].count) / ITEMS_PER_PAGE);
-		return totalPages;
+		return recipes;
 	} catch (error) {
 		console.error("Database Error:", error);
-		throw new Error("Failed to fetch total number of recipes.");
+		throw new Error("Failed to fetch recipes from search.");
 	}
 }

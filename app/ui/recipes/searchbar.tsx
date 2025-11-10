@@ -1,5 +1,4 @@
 "use client";
-import { useActionState } from "react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 
@@ -35,7 +34,7 @@ export default function SearchBar({ placeholder }: { placeholder: string }) {
 				id="searchbar"
 				name="searchbar"
 				type="text"
-				placeholder="Search..."
+				placeholder={placeholder}
 				maxLength={50}
 				onChange={(e) => {
 					handleSearch(e.target.value);

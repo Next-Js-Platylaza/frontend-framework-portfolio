@@ -1,7 +1,5 @@
-import { getCurrentUserId } from "@/auth";
-import { fetchRecipesPages, fetchRecipesByUser } from "@/app/lib/data";
-import RecipeCard from "@/app/ui/recipes/recipe-card";
-import { Recipe } from "@/app/lib/definitions";
+import { fetchRecipesPages } from "@/app/lib/data";
+import Pagination from "@/app/ui/paginiation";
 
 export default async function Page(props: {
 	searchParams?: Promise<{
@@ -9,30 +7,16 @@ export default async function Page(props: {
 		page?: string;
 	}>;
 }) {
-	const userId = await getCurrentUserId();
-
 	const searchParams = await props.searchParams;
 	const query = searchParams?.query || "";
 	const currentPage = Number(searchParams?.page) || 1;
-	const totalPages = await fetchRecipesPages(query, userId as string);
+	const itemsPerPage = 2;
+	const recipes = await fetchRecipesPages(query, itemsPerPage);
 
-	let recipes: Recipe[] | undefined = undefined;
-	if (userId) {
-		recipes = (await fetchRecipesByUser(userId)) as Recipe[];
-		console.log(recipes);
-	}
 
 	return (
-		<>
-			<p>Recipes Page.</p>
-			{recipes?.map((recipe) => {
-				return (
-					<div key={recipe.id}>
-						<RecipeCard recipe={recipe} />
-						<hr />
-					</div>
-				);
-			})}
-		</>
+			<div className="bg-gray-200 min-h-[450px] min-w-[475px] w-[80%] border-gray-400 border-6 p-2 my-5 mx-auto">
+				<Pagination currentPage={currentPage} recipesPerPage={itemsPerPage} recipes={recipes}/>
+			</div>
 	);
 }
