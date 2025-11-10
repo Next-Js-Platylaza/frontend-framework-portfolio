@@ -257,11 +257,26 @@ export async function editRecipe(
 		return {
 			fields: formData,
 			message:
-				"Database Error: Failed to update recipe. | Error: " + error,
-		};
+				"Database Error: Failed to update recipe
 	}
 
 	// Revalidate the cache for the recipes page and redirect the user.
 	revalidatePath(`/recipes/${id}/view`);
 	redirect(`/recipes/${id}/view`);
+}
+
+export async function deleteRecipe(id: string) {
+	try {
+		const recipes = await sql`
+            DELETE
+            FROM recipes
+			WHERE id = ${id} AND user_id = ${getCurrentUserId()}
+            LIMIT 1;
+        `;
+
+		return true;
+	} catch (err) {
+		console.error("Database Error:", err);
+		throw new Error("Failed to delete user's recipe.");
+	}
 }
