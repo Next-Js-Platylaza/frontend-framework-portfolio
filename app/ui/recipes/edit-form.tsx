@@ -29,9 +29,9 @@ export default function EditRecipeForm({recipe} : {recipe: Recipe}) {
 		fieldset: "border border-gray-400 px-3 pt-1 pb-3 mt-2 mb-3 rounded-md",
 		legend: "px-4 text-lg font-semibold text-gray-700",
 		addButton:
-			"py-1 px-3 mt-2 rounded-lg bg-gray-200 text-sm text-gray-900 transition-colors hover:bg-gray-300",
+			"py-1 px-3 mt-2 rounded-lg bg-gray-200 border-gray-400 border-2 text-sm text-gray-900 transition-colors hover:bg-gray-300",
 		removeButton:
-			"py-1 px-2 ml-auto mr-4 mt-1 rounded-lg bg-gray-200 text-sm text-gray-900 transition-colors hover:bg-gray-300",
+			"py-1 px-2 ml-auto mr-4 mt-1 rounded-lg bg-gray-200 border-gray-400 border-2 text-sm text-gray-900 transition-colors hover:bg-gray-300",
 	};
 
 	const [ingredientsInput, refillInputs_Ingredients] = useArrayInput({
@@ -138,7 +138,7 @@ export default function EditRecipeForm({recipe} : {recipe: Recipe}) {
 						onClick={async ()=>{
 							await deleteRecipe(recipe.id);
 						}}
-						className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
+						className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 border-gray-400 border-2 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
 					>
 					Delete Recipe
 					</button>
@@ -146,13 +146,13 @@ export default function EditRecipeForm({recipe} : {recipe: Recipe}) {
 				<div className="mt-6 -mb-2 flex justify-end gap-4">
 					<Link
 						href="/recipes"
-						className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
+						className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 border-gray-400 border-2 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
 					>
 						Cancel
 					</Link>
 					<button
 						type="submit"
-						className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
+						className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 border-gray-400 border-2 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
 					>
 						Save Changes
 					</button>

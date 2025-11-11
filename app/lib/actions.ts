@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 import postgres from "postgres";
 import { v4 as uuidv4 } from "uuid";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
+import { error } from "console";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
@@ -271,11 +272,14 @@ export async function deleteRecipe(id: string) {
 		await sql`
             DELETE
             FROM recipes
-			WHERE id = ${id} AND user_id = ${getCurrentUserId()}
-            LIMIT 1;
+			WHERE id = ${id}
+			AND user_id = ${await getCurrentUserId() ?? "Failed To Get UserID"}
         `;
 	} catch (err) {
 		console.error("Database Error:", err);
-		throw new Error("Failed to delete user's recipe.");
+		throw new Error("Failed to delete user's recipe. | Error: " + err);
 	}
+
+	revalidatePath(`/recipes`);
+	redirect(`/recipes`);
 }
