@@ -12,7 +12,9 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 	const recipe = await fetchRecipeById(id);
 	if (!recipe || recipe.user_id != userId) redirect(`../${id}`);
 
-	return (<>
-	<EditRecipeForm recipe={recipe}/>
-	</>);
+	return (
+		<>
+			<EditRecipeForm recipe={recipe} />
+		</>
+	);
 }

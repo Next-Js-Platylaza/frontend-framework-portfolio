@@ -23,7 +23,10 @@ export default async function Navbar({
 						await signOut({ redirectTo: "/" });
 					}}
 				>
-					<div>Sign Out<p className="m-[-1pt] text-xs whitespace-nowrap">{`(${userName})`}</p></div>
+					<div>
+						Sign Out
+						<p className="m-[-1pt] text-xs whitespace-nowrap">{`(${userName})`}</p>
+					</div>
 				</button>
 			) : (
 				<Link href="account/login" className={signInSignOutClass}>

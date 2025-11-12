@@ -12,46 +12,46 @@ export default function CreateRecipeForm() {
 	initialFormData.set("image", "");
 	initialFormData.append("ingredients", "");
 	initialFormData.append("steps", "");
-	initialFormData.set("user_id", "")
+	initialFormData.set("user_id", "");
 
 	const [state, formAction] = useActionState(createRecipe, {
-			fields: initialFormData,
-			message: null,
-			errors: {},
-		} as RecipeFormState);
-	
-		const arrayInputStyles = {
-			input: "w-[425px]",
-			fieldset: "border border-gray-400 px-3 pt-1 pb-3 mt-2 mb-3 rounded-md",
-			legend: "px-4 text-lg font-semibold text-gray-700",
-			addButton:
-				"py-1 px-3 mt-2 rounded-lg bg-gray-200 border-gray-400 border-2 text-sm text-gray-900 transition-colors hover:bg-gray-300",
-			removeButton:
-				"py-1 px-2 ml-auto mr-4 mt-1 rounded-lg bg-gray-200 border-gray-400 border-2 text-sm text-gray-900 transition-colors hover:bg-gray-300",
-		};
-	
-		const [ingredientsInput, refillInputs_Ingredients] = useArrayInput({
-			label: "ingredient",
-			key: "ingredients-array",
-			defaultValues: state.fields.getAll("ingredients") as string[],
-			styles: arrayInputStyles,
-			inputMinMaxLength: [1, 50],}
-		);
-		const [stepsInput, refillInputs_Steps] = useArrayInput({
-			label: "step",
-			key: "steps-array",
-			defaultValues: state.fields.getAll("steps") as string[],
-			styles: arrayInputStyles,
-			inputMinMaxLength: [1, 100],}
-		);
-	
-		console.log(formatDate(new Date(), "y-mm-dd hh:ii:ss"));
+		fields: initialFormData,
+		message: null,
+		errors: {},
+	} as RecipeFormState);
 
-		// Refill inputs with their values after form submission (because form submission clears all inputs)
-		useEffect(() => {
-			refillInputs_Ingredients();
-			refillInputs_Steps();
-		}, [state.errors]);
+	const arrayInputStyles = {
+		input: "w-[425px]",
+		fieldset: "border border-gray-400 px-3 pt-1 pb-3 mt-2 mb-3 rounded-md",
+		legend: "px-4 text-lg font-semibold text-gray-700",
+		addButton:
+			"py-1 px-3 mt-2 rounded-lg bg-gray-200 border-gray-400 border-2 text-sm text-gray-900 transition-colors hover:bg-gray-300",
+		removeButton:
+			"py-1 px-2 ml-auto mr-4 mt-1 rounded-lg bg-gray-200 border-gray-400 border-2 text-sm text-gray-900 transition-colors hover:bg-gray-300",
+	};
+
+	const [ingredientsInput, refillInputs_Ingredients] = useArrayInput({
+		label: "ingredient",
+		key: "ingredients-array",
+		defaultValues: state.fields.getAll("ingredients") as string[],
+		styles: arrayInputStyles,
+		inputMinMaxLength: [1, 50],
+	});
+	const [stepsInput, refillInputs_Steps] = useArrayInput({
+		label: "step",
+		key: "steps-array",
+		defaultValues: state.fields.getAll("steps") as string[],
+		styles: arrayInputStyles,
+		inputMinMaxLength: [1, 100],
+	});
+
+	console.log(formatDate(new Date(), "y-mm-dd hh:ii:ss"));
+
+	// Refill inputs with their values after form submission (because form submission clears all inputs)
+	useEffect(() => {
+		refillInputs_Ingredients();
+		refillInputs_Steps();
+	}, [state.errors]);
 
 	return (
 		<form action={formAction}>
@@ -127,8 +127,11 @@ export default function CreateRecipeForm() {
 				{stepsInput}
 
 				<p className="mt-2 text-sm text-red-500">{state.message}</p>
-				<input type="hidden" name="date" value={formatDate(new Date(), "y-mm-dd hh:ii:ss")} />
-				
+				<input
+					type="hidden"
+					name="date"
+					value={formatDate(new Date(), "y-mm-dd hh:ii:ss")}
+				/>
 
 				<div className="mt-6 -mb-2 flex justify-end gap-4">
 					<Link

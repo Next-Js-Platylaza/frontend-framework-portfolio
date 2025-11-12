@@ -11,13 +11,19 @@ type ComponentStyles = {
 	addButton?: string;
 	removeButton?: string;
 };
-export default function useArrayInput( {label, key, defaultValues, styles, inputMinMaxLength = [1, 5]}: {
-	label: string,
-	key: string,
-	defaultValues: string[],
-	styles?: ComponentStyles,
-	inputMinMaxLength: [number, number],}
-) {
+export default function useArrayInput({
+	label,
+	key,
+	defaultValues,
+	styles,
+	inputMinMaxLength = [1, 5],
+}: {
+	label: string;
+	key: string;
+	defaultValues: string[];
+	styles?: ComponentStyles;
+	inputMinMaxLength: [number, number];
+}) {
 	const firstID: string = key + "-first";
 	const [items, setItems] = useState([NewItem(firstID)]);
 	const [itemIDs, setItemIDs] = useState([firstID]);
