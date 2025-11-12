@@ -1,10 +1,11 @@
 "use client";
 import Link from "next/link";
 import { editRecipe, deleteRecipe, RecipeFormState } from "@/app/lib/actions";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import useArrayInput from "./useArrayInput";
 import { Recipe } from "@/app/lib/definitions";
 import { formatDate } from "@/app/lib/util";
+import DeleteRecipeForm from "./delete-form";
 
 export default function EditRecipeForm({recipe} : {recipe: Recipe}) {
 	const initialFormData = new FormData();
@@ -55,7 +56,14 @@ export default function EditRecipeForm({recipe} : {recipe: Recipe}) {
 		refillInputs_Steps();
 	}, [state.errors]);
 
+	// Delete confirmation
+	const [wantToDelete, setWantToDelete] = useState(false);
+
 	return (
+		<>
+		{wantToDelete ? <>
+			<DeleteRecipeForm recipe={recipe} cancelFunction={()=>setWantToDelete(false)}/>
+			</> : <>
 		<form action={formAction}>
 			<div className="rounded-md border-[2px] border-gray-300 w-[65%] m-auto bg-gray-100 p-4 md:p-6">
 				{/* Title */}
@@ -135,8 +143,9 @@ export default function EditRecipeForm({recipe} : {recipe: Recipe}) {
 				<div className="mt-6 -mb-2 flex gap-4">
 				    <button
 						type="button"
-						onClick={async ()=>{
-							await deleteRecipe(recipe.id);
+						onClick={()=>{
+							setWantToDelete(true);
+							//await deleteRecipe(recipe.id);
 						}}
 						className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 border-gray-400 border-2 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
 					>
@@ -159,5 +168,7 @@ export default function EditRecipeForm({recipe} : {recipe: Recipe}) {
 				</div>
 			</div>
 		</form>
+		</>}
+		</>
 	);
 }

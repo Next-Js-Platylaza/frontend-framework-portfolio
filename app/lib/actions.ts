@@ -267,7 +267,9 @@ export async function editRecipe(
 	redirect(`/recipes/${id}/view`);
 }
 
-export async function deleteRecipe(id: string) {
+export async function deleteRecipe(prevState : { message: string, error: string } | undefined, formData: FormData) {
+	const id = formData.get("id") as string ?? "Failed To Get Recipe ID";
+
 	try {
 		await sql`
             DELETE
@@ -275,9 +277,17 @@ export async function deleteRecipe(id: string) {
 			WHERE id = ${id}
 			AND user_id = ${await getCurrentUserId() ?? "Failed To Get UserID"}
         `;
+
+		return {
+			message: "Successfully deleted recipe!",
+			error: "",
+		}
 	} catch (err) {
 		console.error("Database Error:", err);
-		throw new Error("Failed to delete user's recipe. | Error: " + err);
+		return {
+			message: "",
+			error: "Failed to delete user's recipe. | Error: " + err,
+		}
 	}
 
 	revalidatePath(`/recipes`);
