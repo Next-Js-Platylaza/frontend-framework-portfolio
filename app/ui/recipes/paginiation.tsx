@@ -25,9 +25,9 @@ export default function Pagination({
 
 	function PageNumberButton({ page }: { page: number }) {
 		const selectedClass =
-			"bg-[#B6BCC5] w-8 h-8 text-lg text-center border-gray-500 border-2";
+			"w-8 h-8 text-lg text-center bg-[#B6BCC5] border-gray-500 border-2";
 		const notSelectedClass =
-			"bg-gray-300 w-8 h-8 text-lg text-center border-gray-400 border-2 hover:bg-[#B6BCC5] hover:border-gray-500";
+			"w-8 h-8 text-lg text-center bg-gray-300 border-gray-400 border-2 hover:bg-[#B6BCC5] hover:border-gray-500";
 
 		return (
 			<Link
@@ -91,7 +91,7 @@ export default function Pagination({
 					)}
 				</>
 			) : (
-				<div className="flex">
+				<div className="flex ">
 					{currentPage > 1 ? (
 						<Link
 							href={pageHref(currentPage - 1)}

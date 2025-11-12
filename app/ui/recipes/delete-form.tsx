@@ -1,16 +1,18 @@
 "use client";
 import Link from "next/link";
 import { deleteRecipe, RecipeFormState } from "@/app/lib/actions";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { Recipe } from "@/app/lib/definitions";
 import { title } from "process";
 
 export default function DeleteRecipeForm({
 	recipe,
 	cancelFunction,
+	deleteFunction,
 }: {
 	recipe: Recipe;
 	cancelFunction: () => void;
+	deleteFunction: () => void;
 }) {
 	const [state, formAction] = useActionState(deleteRecipe, {
 		message: "",
@@ -50,7 +52,7 @@ export default function DeleteRecipeForm({
 					<h1 className="max-md:text-sm text-center">
 						Are you sure you want to delete this recipe?
 					</h1>
-					<h1 className="line-clamp-5 max-md:text-sm text-center">{`\(\"${title}\"\)`}</h1>
+					<h1 className="line-clamp-5 max-md:text-sm text-center">{`("${title}")`}</h1>
 				</div>
 
 				<div className="mt-6 -mb-2 justify-center flex gap-4">
@@ -61,15 +63,31 @@ export default function DeleteRecipeForm({
 					>
 						Cancel
 					</button>
-					<button
-						type="submit"
-						className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 border-gray-400 border-2 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
-					>
-						Confirm
-					</button>
+					{state.message ? (
+						<Link
+							href="/recipes"
+							className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 border-gray-400 border-2 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
+						>
+							View Recipes
+						</Link>
+					) : (
+						<button
+							type={state.message ? "button" : "submit"}
+							onClick={() => {
+								deleteFunction();
+							}}
+							className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 border-gray-400 border-2 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
+						>
+							Confirm
+						</button>
+					)}
 				</div>
-				<p className="mt-2 text-sm text-red-500">{state.error}</p>
-				<p className="mt-2 text-sm text-red-500">{state.message}</p>
+				<p className="mt-5 text-center text-sm text-red-500">
+					{state.error}
+				</p>
+				<p className="mt-2 text-center text-sm text-gray-900">
+					{state.message}
+				</p>
 			</div>
 		</form>
 	);

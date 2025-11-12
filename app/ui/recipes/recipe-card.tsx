@@ -25,7 +25,7 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
 						/>
 					</div>
 					<div className="mr-6 pl-4">
-						<h1 className="line-clamp-2 text-lg mb-3 max-md:text-sm">
+						<h1 className="line-clamp-3 text-lg mb-3 max-md:text-sm max-xl:w-[400px] max-lg:w-[192px] max-md:w-[92px]">
 							- {recipe.title}
 						</h1>
 						<li className="mt-2">

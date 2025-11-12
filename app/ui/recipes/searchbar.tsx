@@ -21,8 +21,8 @@ export default function SearchBar({ placeholder }: { placeholder: string }) {
 	}, 300);
 
 	const buttonClass = `flex ml-[5px] my-auto h-[40px] grow text-center
-		items-center justify-center rounded-md bg-gray-50 p-3 text-sm font-medium
-		hover:bg-sky-100 hover:text-blue-600 md:flex-none md:p-2 md:px-3 md:mx-[4px]`;
+		items-center justify-center rounded-md p-3 text-sm font-medium
+		bg-gray-100 border-gray-300 border-2 hover:bg-gray-200 hover:border-gray-500 md:flex-none md:p-2 md:px-3 md:mx-[4px]`;
 
 	return (
 		<div className="flex w-[full] mx-auto max-md:w-full">

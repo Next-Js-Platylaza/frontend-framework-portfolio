@@ -9,7 +9,7 @@ export default async function Navbar({
 }) {
 	const userName = await getCurrentUserName();
 	const signInSignOutClass =
-		"flex ml-[5px] my-auto h-[60px] min-w-[100px] w-auto grow items-center justify-center rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:p-2 md:px-3 md:ml-auto";
+		"flex ml-[5px] my-auto h-[60px] min-w-[100px] w-auto grow items-center justify-center rounded-md bg-gray-50 border-gray-200 border-2 p-3 text-sm font-medium hover:bg-sky-100 hover:border-sky-200 hover:text-blue-600 md:flex-none md:p-2 md:px-3 md:ml-auto";
 
 	return (
 		<div className="flex w-full bg-gray-300 p-2">

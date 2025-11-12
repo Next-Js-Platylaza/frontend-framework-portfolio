@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
-import { editRecipe, deleteRecipe, RecipeFormState } from "@/app/lib/actions";
-import { useActionState, useEffect, useState } from "react";
+import { createRecipe, editRecipe, RecipeFormState } from "@/app/lib/actions";
+import { useActionState, useEffect, useRef, useState } from "react";
 import useArrayInput from "./useArrayInput";
 import { Recipe } from "@/app/lib/definitions";
 import { formatDate } from "@/app/lib/util";
@@ -19,11 +19,22 @@ export default function EditRecipeForm({ recipe }: { recipe: Recipe }) {
 		initialFormData.append(`steps`, step);
 	});
 
-	const [state, formAction] = useActionState(editRecipe, {
+	const [editState, formAction] = useActionState(editRecipe, {
 		fields: initialFormData,
 		message: null,
 		errors: {},
 	} as RecipeFormState);
+
+	const [deletedState, deletedFormAction] = useActionState(
+		createRecipe,
+		editState,
+	);
+
+	// Delete confirmation
+	const [wantToDelete, setWantToDelete] = useState(false);
+	const [deleted, setDeleted] = useState(false);
+
+	let state = deleted ? deletedState : editState;
 
 	const arrayInputStyles = {
 		input: "w-[425px]",
@@ -56,9 +67,6 @@ export default function EditRecipeForm({ recipe }: { recipe: Recipe }) {
 		refillInputs_Steps();
 	}, [state.errors]);
 
-	// Delete confirmation
-	const [wantToDelete, setWantToDelete] = useState(false);
-
 	return (
 		<>
 			{wantToDelete ? (
@@ -66,11 +74,15 @@ export default function EditRecipeForm({ recipe }: { recipe: Recipe }) {
 					<DeleteRecipeForm
 						recipe={recipe}
 						cancelFunction={() => setWantToDelete(false)}
+						deleteFunction={() => {
+							setDeleted(true);
+							state = deletedState;
+						}}
 					/>
 				</>
 			) : (
 				<>
-					<form action={formAction}>
+					<form action={deleted ? deletedFormAction : formAction}>
 						<div className="rounded-md border-[2px] border-gray-300 w-[65%] m-auto bg-gray-100 p-4 md:p-6">
 							{/* Title */}
 							<div className="mb-4">
@@ -164,6 +176,11 @@ export default function EditRecipeForm({ recipe }: { recipe: Recipe }) {
 							</p>
 							<input
 								type="hidden"
+								name="saveAsNew"
+								value={`${deleted}`}
+							/>
+							<input
+								type="hidden"
 								name="id"
 								value={state.fields.get("id") as string}
 							/>
@@ -176,29 +193,31 @@ export default function EditRecipeForm({ recipe }: { recipe: Recipe }) {
 								)}
 							/>
 							<div className="mt-6 -mb-2 flex gap-4">
-								<button
-									type="button"
-									onClick={() => {
-										setWantToDelete(true);
-										//await deleteRecipe(recipe.id);
-									}}
-									className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 border-gray-400 border-2 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
-								>
-									Delete Recipe
-								</button>
+								{!deleted && (
+									<button
+										type="button"
+										onClick={() => {
+											setWantToDelete(true);
+											//await deleteRecipe(recipe.id);
+										}}
+										className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 border-gray-400 border-2 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
+									>
+										Delete Recipe
+									</button>
+								)}
 							</div>
 							<div className="mt-6 -mb-2 flex justify-end gap-4">
 								<Link
 									href="/recipes"
 									className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 border-gray-400 border-2 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
 								>
-									Cancel
+									{deleted ? "Exit Without Saving" : "Cancel"}
 								</Link>
 								<button
 									type="submit"
 									className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 border-gray-400 border-2 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
 								>
-									Save Changes
+									{deleted ? "Save As New" : "Save Changes"}
 								</button>
 							</div>
 						</div>

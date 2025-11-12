@@ -24,7 +24,7 @@ export default function CreateAccountForm() {
 
 	return (
 		<form action={formAction}>
-			<div className="rounded-md border-[2px] border-gray-300 w-[50%] m-auto bg-gray-100 mt-[5%] p-4 md:p-6">
+			<div className="rounded-md border-[2px] border-gray-300 w-[50%] m-auto bg-gray-100 mt-[5%] p-4 md:p-6 ">
 				{/* User Name */}
 				<div className="mb-4">
 					<label
@@ -110,7 +110,7 @@ export default function CreateAccountForm() {
 							onClick={() => {
 								setPasswordIsVisible((b) => !b);
 							}}
-							className="flex h-10 ml-5 items-center rounded-lg bg-gray-200 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
+							className="flex h-11 ml-5 items-center rounded-lg  px-4 text-sm font-medium text-gray-600 bg-gray-200 border-gray-400 border-2 hover:bg-gray-300 hover:border-gray-500 hover:text-gray-800 transition-colors"
 						>
 							{passwordIsVisible
 								? "Hide Password"
@@ -141,13 +141,13 @@ export default function CreateAccountForm() {
 				<div className="flex justify-end gap-4">
 					<Link
 						href="/"
-						className="flex h-10 items-center rounded-lg bg-gray-200 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
+						className="flex h-10 items-center rounded-lg px-4 text-sm font-medium text-gray-600 bg-gray-200 border-gray-400 border-2 hover:bg-gray-300 hover:border-gray-500 hover:text-gray-800 transition-colors"
 					>
 						Cancel
 					</Link>
 					<button
 						type="submit"
-						className="flex h-10 items-center rounded-lg bg-gray-200 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
+						className="flex h-10 items-center rounded-lg px-4 text-sm font-medium text-gray-600 bg-gray-200 border-gray-400 border-2 hover:bg-gray-300 hover:border-gray-500 hover:text-gray-800 transition-colors"
 					>
 						Create Account
 					</button>

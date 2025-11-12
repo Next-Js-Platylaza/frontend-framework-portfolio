@@ -190,7 +190,7 @@ export async function createRecipe(
 
 	// Prepare data for insertion into the database
 	const uuid = uuidv4();
-	const user_id = await getCurrentUserId() ?? "Failed To Get UserID.";
+	const user_id = (await getCurrentUserId()) ?? "Failed To Get UserID.";
 
 	const { title, image, ingredients, steps, date } = validatedFields.data;
 	// Insert data into the database
@@ -208,11 +208,10 @@ export async function createRecipe(
 		};
 	}
 
-	return {
-			fields: formData,
-			message:
-				"Remove this you silly goose. | Date: " + date,
-		};
+	/*return { // Added for fixing timezone issues
+		fields: formData,
+		message: "Remove this you silly goose. | Date: " + date,
+	};*/
 
 	// Revalidate the cache for the recipes page and redirect the user.
 	revalidatePath(`/recipes/${uuid}/view`);
@@ -257,9 +256,8 @@ export async function editRecipe(
 		// If a database error occurs, return a more specific error.
 		return {
 			fields: formData,
-			message:
-				"Database Error: Failed to update recipe.",
-		}
+			message: "Database Error: Failed to update recipe.",
+		};
 	}
 
 	// Revalidate the cache for the recipes page and redirect the user.
@@ -267,27 +265,30 @@ export async function editRecipe(
 	redirect(`/recipes/${id}/view`);
 }
 
-export async function deleteRecipe(prevState : { message: string, error: string } | undefined, formData: FormData) {
-	const id = formData.get("id") as string ?? "Failed To Get Recipe ID";
+export async function deleteRecipe(
+	prevState: { message: string; error: string } | undefined,
+	formData: FormData,
+) {
+	const id = (formData.get("id") as string) ?? "Failed To Get Recipe ID";
 
 	try {
 		await sql`
             DELETE
             FROM recipes
 			WHERE id = ${id}
-			AND user_id = ${await getCurrentUserId() ?? "Failed To Get UserID"}
+			AND user_id = ${(await getCurrentUserId()) ?? "Failed To Get UserID"}
         `;
 
 		return {
 			message: "Successfully deleted recipe!",
 			error: "",
-		}
+		};
 	} catch (err) {
 		console.error("Database Error:", err);
 		return {
 			message: "",
 			error: "Failed to delete user's recipe. | Error: " + err,
-		}
+		};
 	}
 
 	revalidatePath(`/recipes`);
