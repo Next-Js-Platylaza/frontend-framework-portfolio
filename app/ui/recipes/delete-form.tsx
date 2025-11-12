@@ -46,11 +46,13 @@ export default function DeleteRecipeForm({
 
 	return (
 		<form action={formAction}>
-			<div className="rounded-md border-[2px] border-gray-300 min-w-[200px] w-[35%] m-auto bg-gray-100 p-4 md:p-6">
+			<div className="rounded-md border-[2px] border-gray-300 min-w-[240px] w-[38%] m-auto bg-gray-100 p-4 md:p-6">
 				<input type="hidden" name="id" value={recipe.id} />
 				<div className="">
 					<h1 className="max-md:text-sm text-center">
-						Are you sure you want to delete this recipe?
+						{state.message
+							? "Create a new recipe with this recipes template, or view your recipes."
+							: "Are you sure you want to delete this recipe?"}
 					</h1>
 					<h1 className="line-clamp-5 max-md:text-sm text-center">{`("${title}")`}</h1>
 				</div>
@@ -59,14 +61,16 @@ export default function DeleteRecipeForm({
 					<button
 						type="button"
 						onClick={cancelFunction}
-						className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 border-gray-400 border-2 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
+						className={`flex mt-auto h-12 justify-center items-center text-center rounded-lg bg-gray-200 border-gray-400 border-2 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300 ${
+							state.message ? "min-w-[120px]" : "min-w-[75px]"
+						}`}
 					>
-						Cancel
+						{state.message ? "Create With Template" : "Cancel"}
 					</button>
 					{state.message ? (
 						<Link
 							href="/recipes"
-							className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 border-gray-400 border-2 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
+							className="flex mt-auto h-12 items-center text-center rounded-lg bg-gray-200 border-gray-400 border-2 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
 						>
 							View Recipes
 						</Link>
@@ -76,7 +80,7 @@ export default function DeleteRecipeForm({
 							onClick={() => {
 								deleteFunction();
 							}}
-							className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 border-gray-400 border-2 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
+							className="flex mt-auto h-12 items-center text-center rounded-lg bg-gray-200 border-gray-400 border-2 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
 						>
 							Confirm
 						</button>

@@ -83,7 +83,7 @@ export default function EditRecipeForm({ recipe }: { recipe: Recipe }) {
 			) : (
 				<>
 					<form action={deleted ? deletedFormAction : formAction}>
-						<div className="rounded-md border-[2px] border-gray-300 w-[65%] m-auto bg-gray-100 p-4 md:p-6">
+						<div className="rounded-md border-[2px] border-gray-300 w-[65%] min-w-[635px] m-auto bg-gray-100 p-4 md:p-6">
 							{/* Title */}
 							<div className="mb-4">
 								<label
