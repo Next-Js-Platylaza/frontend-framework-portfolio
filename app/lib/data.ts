@@ -86,15 +86,15 @@ export async function fetchRecipesByUser(userId: string) {
 	}
 }
 
-export async function fetchRecipesPages(query: string, itemsPerPage : number) {
-	const userId = await getCurrentUserId() ?? "Failed To Fetch UserID";
+export async function fetchRecipesPages(query: string, itemsPerPage: number) {
+	const userId = (await getCurrentUserId()) ?? "Failed To Fetch UserID";
 	try {
 		const recipes = await sql<Recipe[]>`
 			SELECT *
     		FROM recipes
     		WHERE
-      			title ILIKE ${`%${query}%`} OR
-      			date::text ILIKE ${`%${query}%`}
+      			(title ILIKE ${`%${query}%`} OR
+      			date::text ILIKE ${`%${query}%`})
 	  			AND user_id = ${userId}
   		`;
 

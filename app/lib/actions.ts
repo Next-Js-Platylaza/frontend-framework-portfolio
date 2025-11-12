@@ -290,7 +290,4 @@ export async function deleteRecipe(
 			error: "Failed to delete user's recipe. | Error: " + err,
 		};
 	}
-
-	revalidatePath(`/recipes`);
-	redirect(`/recipes`);
 }
