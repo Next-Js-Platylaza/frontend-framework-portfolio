@@ -5,12 +5,13 @@ export default async function Page(props: {
 	searchParams?: Promise<{
 		query?: string;
 		page?: string;
+		items?: string;
 	}>;
 }) {
 	const searchParams = await props.searchParams;
 	const query = searchParams?.query || "";
 	const currentPage = Number(searchParams?.page) || 1;
-	const itemsPerPage = 3;
+	const itemsPerPage = Number(searchParams?.items) || 5;
 	const recipes = await fetchRecipesPages(query, itemsPerPage);
 
 	return (

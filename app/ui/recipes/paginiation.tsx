@@ -19,8 +19,8 @@ export default function Pagination({
 
 	function pageHref(page: number) {
 		return `recipes?page=${page}${
-			params.get("query") ? `&query=${params.get("query")}` : ""
-		}`;
+			params.get("items") ? `&items=${params.get("items")}` : ""
+		}${params.get("query") ? `&query=${params.get("query")}` : ""}`;
 	}
 
 	function PageNumberButton({ page }: { page: number }) {
@@ -54,7 +54,25 @@ export default function Pagination({
 
 	let pageButtons: JSX.Element[] = [];
 	for (let i = 1; i <= pagesCount; i++) {
-		pageButtons.push(<PageNumberButton key={i} page={i} />);
+		if (i > 5) break;
+
+		let id = i;
+		if (currentPage > 5) {
+			switch (pagesCount - currentPage) {
+				case 0:
+					id += currentPage - 5;
+					break;
+				case 1:
+					id += currentPage - 4;
+					break;
+				default:
+					id += currentPage - 3;
+					break;
+			}
+		}
+
+		if (id > pagesCount) break;
+		pageButtons.push(<PageNumberButton key={id} page={id} />);
 	}
 
 	return (

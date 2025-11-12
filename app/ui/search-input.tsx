@@ -1,14 +1,13 @@
 "use client";
-
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 
-export default function Search({ placeholder }: { placeholder: string }) {
+export default function SearchInput({ placeholder }: { placeholder: string }) {
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
 	const { replace } = useRouter();
 
-	const handleSearch = useDebouncedCallback((term) => {
+	const handleSearch = useDebouncedCallback((term: string) => {
 		console.log(`Searching... ${term}`);
 
 		const params = new URLSearchParams(searchParams);
@@ -21,14 +20,22 @@ export default function Search({ placeholder }: { placeholder: string }) {
 		replace(`${pathname}?${params.toString()}`);
 	}, 300);
 
+	const buttonClass = `flex ml-[5px] my-auto h-[40px] grow text-center
+		items-center justify-center rounded-md p-3 text-sm font-medium
+		bg-gray-100 border-gray-300 border-2 hover:bg-gray-200 hover:border-gray-500 md:flex-none md:p-2 md:px-3 md:mx-[4px]`;
+
 	return (
-		<div className="relative flex flex-1 flex-shrink-0">
-			<label htmlFor="search" className="sr-only">
+		<div className="flex w-[full] mx-auto max-md:w-full">
+			<label htmlFor="searchbar" className="sr-only">
 				Search
 			</label>
 			<input
-				className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+				className={`w-[450px] max-w-full max-md:w-[150px] text-left ${buttonClass}`}
+				id="searchbar"
+				name="searchbar"
+				type="text"
 				placeholder={placeholder}
+				maxLength={50}
 				onChange={(e) => {
 					handleSearch(e.target.value);
 				}}
