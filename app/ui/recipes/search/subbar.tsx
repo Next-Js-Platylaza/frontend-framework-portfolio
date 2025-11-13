@@ -4,10 +4,8 @@ import SearchBar from "./searchbar";
 import { Suspense } from "react";
 
 export default async function Subbar() {
-	//href={`${pathName}?searchbar=`}
-
 	return (
-		<div className="flex w-full max-w-[700px] min-w-[10px] bg-[#9999a0] m-auto px-2 pb-2 pt-1">
+		<div className="flex w-full max-w-[700px] min-w-[10px] bg-[#9999a0] border-2 border-[#6f6f7f] m-auto px-2 pb-2 pt-1">
 			<div className="m-auto">
 				<Link
 					href="/recipes/create"
