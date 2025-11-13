@@ -105,7 +105,7 @@ export async function createUser(
 	try {
 		await sql`
 		INSERT INTO users (id, name, email, password)
-		VALUES (${uuid}, ${name}, ${email}, ${hash})`;
+		VALUES (${uuid}, ${name}, ${email.toLowerCase()}, ${hash})`;
 	} catch (error) {
 		let message = "Something went wrong, please try again. | " + error;
 		if (`${error}`.includes("unique")) {

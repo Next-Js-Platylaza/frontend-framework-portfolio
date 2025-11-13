@@ -48,7 +48,7 @@ export const { auth, signIn, signOut } = NextAuth({
 					const { email, password } = parsedCredentials.data;
 					const user = await fetchUser(
 						usedUsernameMethod ? "name" : "email",
-						email,
+						email.toLowerCase(),
 					);
 
 					if (!user) return null;

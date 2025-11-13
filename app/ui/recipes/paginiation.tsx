@@ -10,16 +10,18 @@ export default function Pagination({
 	currentPage,
 	recipesPerPage,
 	recipes,
+	userHasRecipes,
 }: {
 	currentPage: number;
 	recipesPerPage: number;
 	recipes: RowList<Recipe[]>;
+	userHasRecipes: boolean;
 }) {
 	// General Setup
 	const params = useSearchParams();
 	const amountToSkip = recipesPerPage * (currentPage - 1);
 	const pagesCount = Math.ceil(recipes.length / recipesPerPage);
-
+	
 	// Create an array of all <RecipeCard>s to display
 	const recipesToDisplay: Recipe[] =
 		currentPage >= 1
@@ -113,6 +115,9 @@ export default function Pagination({
 			})}
 			{recipesToDisplay.length <= 0 || currentPage < 1 ? (
 				<div className="text-center">
+					{!userHasRecipes ? <h1>
+								You don't have any recipes yet, create a recipe to see it here.
+							</h1> : <>
 					{currentPage != 1 ? (
 						<>
 							<h1>Sorry, no recipes for this page. :/</h1>
@@ -127,12 +132,10 @@ export default function Pagination({
 							</Link>
 						</>
 					) : (
-						<>
 							<h1>
 								Sorry, no recipes found with that search. :/
 							</h1>
-						</>
-					)}
+					)}</>}
 				</div>
 			) : (
 				<div className="flex ">
