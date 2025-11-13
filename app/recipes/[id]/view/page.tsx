@@ -5,6 +5,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect as redirectTo } from "next/navigation";
 
+import { Metadata } from "next";
+export async function generateMetadata(props: { params: Promise<{ id: string }> }): Promise<Metadata> {
+	const recipe = await fetchRecipeById((await props.params).id);
+  return {
+    title: `View Recipe | ${recipe.title}`,
+  };
+}
+
 let pageId: string;
 export default async function Page(props: { params: Promise<{ id: string }> }) {
 	const params = await props.params;

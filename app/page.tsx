@@ -1,7 +1,7 @@
-import { Metadata } from "next";
 import Navbar from "@/app/ui/navbar";
 import { getCurrentUserId } from "@/auth";
 
+import { Metadata } from "next";
 export const metadata: Metadata = {
 	title: "Home Page",
 };

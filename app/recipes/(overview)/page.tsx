@@ -2,6 +2,11 @@ import { fetchRecipesByUser, fetchRecipesPages } from "@/app/lib/data";
 import Pagination from "@/app/ui/recipes/paginiation";
 import { getCurrentUserId } from "@/auth";
 
+import { Metadata } from "next";
+export const metadata: Metadata = {
+	title: "My Recipes",
+};
+
 export default async function Page(props: {
 	searchParams?: Promise<{
 		query?: string;
