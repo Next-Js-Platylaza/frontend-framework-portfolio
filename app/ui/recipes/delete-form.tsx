@@ -24,7 +24,7 @@ export default function DeleteRecipeForm({
 	if (recipe.title.includes(" ")) {
 		title = recipe.title;
 	} else {
-		const numberOfCharactersBetweenSpaces: number = 17;
+		const numberOfCharactersBetweenSpaces: number = recipe.title.length / 2;
 		let prevIndex: number = 0;
 		for (let i = 0; i < recipe.title.length; i++) {
 			if (

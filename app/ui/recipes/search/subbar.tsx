@@ -8,7 +8,7 @@ export default async function Subbar() {
 
 	return (
 		<div className="flex w-full max-w-[700px] min-w-[10px] bg-[#9999a0] m-auto px-2 pb-2 pt-1">
-			<div className="mr-auto">
+			<div className="m-auto">
 				<Link
 					href="/recipes/create"
 					className={`flex m-auto h-[40px] w-[110px] grow text-center
@@ -18,7 +18,7 @@ export default async function Subbar() {
 				</Link>
 			</div>
 
-			<div className="w-full max-md:w-[8px] m-auto px-2">
+			<div className="w-[50px] max-md:w-[8px] m-auto px-2">
 				<div className="h-[40px] w-[2px] mx-auto bg-gray-500" />
 			</div>
 			<Suspense>

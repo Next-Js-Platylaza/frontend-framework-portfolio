@@ -21,16 +21,16 @@ export default function SearchInput({ placeholder }: { placeholder: string }) {
 	}, 300);
 
 	const buttonClass = `flex ml-[5px] my-auto h-[40px] grow text-center
-		items-center justify-center rounded-md p-3 text-sm font-medium
-		bg-gray-100 border-gray-300 border-2 hover:bg-gray-200 hover:border-gray-500 md:flex-none md:p-2 md:px-3 md:mx-[4px]`;
+		items-center justify-center rounded-md text-sm font-medium
+		bg-gray-100 border-gray-300 border-2 hover:bg-gray-200 hover:border-gray-500 md:flex-none md:p-2 md:px-3 md:mr-[4px]`;
 
 	return (
-		<div className="flex w-[full] mx-auto max-md:w-full">
+		<div className="flex ml-auto max-md:w-full">
 			<label htmlFor="searchbar" className="sr-only">
 				Search
 			</label>
 			<input
-				className={`w-[450px] max-w-full max-md:w-[150px] text-left ${buttonClass}`}
+				className={`w-[340px] max-w-full max-md:w-[150px] text-left ${buttonClass}`}
 				id="searchbar"
 				name="searchbar"
 				type="text"

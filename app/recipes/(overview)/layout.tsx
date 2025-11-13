@@ -1,5 +1,5 @@
 import Navbar from "@/app/ui/navbar";
-import Subbar from "@/app/ui/recipes/subbar";
+import Subbar from "@/app/ui/recipes/search/subbar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
 	return (

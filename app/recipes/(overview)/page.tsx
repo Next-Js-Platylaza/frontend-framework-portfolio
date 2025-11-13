@@ -15,7 +15,7 @@ export default async function Page(props: {
 	const recipes = await fetchRecipesPages(query, itemsPerPage);
 
 	return (
-		<div className="bg-gray-200 min-h-[450px] min-w-[475px] w-[80%] border-gray-400 border-6 p-2 my-5 mx-auto">
+		<div className="bg-gray-200 min-h-[450px] min-w-[650px] w-[80%] border-gray-400 border-6 p-2 my-5 mx-auto">
 			<Pagination
 				currentPage={currentPage}
 				recipesPerPage={itemsPerPage}

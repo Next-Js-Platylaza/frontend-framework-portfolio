@@ -1,10 +1,10 @@
 "use client";
 import { RowList } from "postgres";
-import { Recipe } from "../../lib/definitions";
+import { Recipe } from "@/app/lib/definitions";
 import RecipeCard from "./recipe-card";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { JSX } from "react";
+import { JSX, useEffect, useRef, useState } from "react";
 
 export default function Pagination({
 	currentPage,
@@ -15,15 +15,29 @@ export default function Pagination({
 	recipesPerPage: number;
 	recipes: RowList<Recipe[]>;
 }) {
+	// General Setup
 	const params = useSearchParams();
+	const amountToSkip = recipesPerPage * (currentPage - 1);
+	const pagesCount = Math.ceil(recipes.length / recipesPerPage);
 
+	// Create an array of all <RecipeCard>s to display
+	const recipesToDisplay: Recipe[] =
+		currentPage >= 1
+			? recipes.slice(
+					amountToSkip,
+					Math.min(amountToSkip + recipesPerPage, recipes.length),
+			  )
+			: [];
+
+	//#region Page Number Buttons
 	function pageHref(page: number) {
 		return `recipes?page=${page}${
 			params.get("items") ? `&items=${params.get("items")}` : ""
 		}${params.get("query") ? `&query=${params.get("query")}` : ""}`;
 	}
 
-	function PageNumberButton({ page }: { page: number }) {
+	// TSX Component for a page number
+	function PageNumberButton({ page, className }: { page: number, className: string | undefined }) {
 		const selectedClass =
 			"w-8 h-8 text-lg text-center bg-[#B6BCC5] border-gray-500 border-2";
 		const notSelectedClass =
@@ -33,7 +47,7 @@ export default function Pagination({
 			<Link
 				href={pageHref(page)}
 				className={
-					page == currentPage ? selectedClass : notSelectedClass
+					`${page == currentPage ? selectedClass : notSelectedClass} ${className}`
 				}
 			>
 				{page}
@@ -41,39 +55,49 @@ export default function Pagination({
 		) as JSX.Element;
 	}
 
-	const amountToSkip = recipesPerPage * (currentPage - 1);
-	const pagesCount = Math.ceil(recipes.length / recipesPerPage);
+	const [pageButtons, setPageButtons] = useState<JSX.Element[]>([]);
+	const pageButtonsRef = useRef<HTMLDivElement>(null);
 
-	const recipesToDisplay: Recipe[] =
-		currentPage >= 1
-			? recipes.slice(
-					amountToSkip,
-					Math.min(amountToSkip + recipesPerPage, recipes.length),
-			  )
-			: [];
+	// Create an array of page number buttons
+    useEffect(() => {
+        const handleResize = () => {
+			let newPageButtons:	JSX.Element[] = [];
+			let pageIDs: number[] = [];
 
-	let pageButtons: JSX.Element[] = [];
-	for (let i = 1; i <= pagesCount; i++) {
-		if (i > 5) break;
+			const maxPages = pageButtonsRef?.current ? Math.floor(pageButtonsRef.current.offsetWidth / 52): 10;
+			const aheadPages = pagesCount - currentPage;
+			const behindPages = currentPage - 1;
 
-		let id = i;
-		if (currentPage > 5) {
-			switch (pagesCount - currentPage) {
-				case 0:
-					id += currentPage - 5;
-					break;
-				case 1:
-					id += currentPage - 4;
-					break;
-				default:
-					id += currentPage - 3;
-					break;
+			let idealCenter = Math.floor(maxPages / 2);
+			let id = currentPage - idealCenter;
+
+			if (aheadPages < idealCenter) {
+				id = pagesCount - (maxPages - 1);
+			} else if (behindPages < idealCenter) { 
+				id = 1;
 			}
-		}
 
-		if (id > pagesCount) break;
-		pageButtons.push(<PageNumberButton key={id} page={id} />);
-	}
+			for (let i = 1; i <= pagesCount; i++) {
+				if (id <= 0) continue;
+				if (i > maxPages || id > pagesCount) break;
+
+				pageIDs.push(id);
+				id++;
+			}
+
+			pageIDs.forEach(id => {
+				newPageButtons.push(<PageNumberButton className="my-auto" key={id} page={id} />);
+			});
+
+			setPageButtons(newPageButtons);
+    	};
+
+        window.addEventListener('resize', handleResize);
+        handleResize();
+
+        return () => window.removeEventListener('resize', handleResize);
+    }, [params]);
+	//#endregion Page Number Buttons
 
 	return (
 		<>
@@ -86,7 +110,7 @@ export default function Pagination({
 				);
 			})}
 			{recipesToDisplay.length <= 0 || currentPage < 1 ? (
-				<>
+				<div className="text-center">
 					{currentPage != 1 ? (
 						<>
 							<h1>Sorry, no recipes for this page. :/</h1>
@@ -107,7 +131,7 @@ export default function Pagination({
 							</h1>
 						</>
 					)}
-				</>
+				</div>
 			) : (
 				<div className="flex ">
 					{currentPage > 1 ? (
@@ -121,7 +145,7 @@ export default function Pagination({
 						<div className="flex ml-10 mr-auto mt-auto w-38 h-10"></div>
 					)}
 
-					<div className="flex gap-5 mx-auto">
+					<div ref={pageButtonsRef} className="flex gap-5 mx-8 w-full justify-center max-lg:mx-1 max-lg:gap-4">
 						{pagesCount > 1 && pageButtons}
 					</div>
 

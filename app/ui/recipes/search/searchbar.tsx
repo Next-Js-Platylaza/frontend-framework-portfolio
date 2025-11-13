@@ -1,7 +1,7 @@
 "use client";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
-import SearchInput from "../search-input";
+import SearchInput from "./search-input";
 
 export default function SearchBar({ placeholder }: { placeholder: string }) {
 	const searchParams = useSearchParams();
@@ -21,17 +21,13 @@ export default function SearchBar({ placeholder }: { placeholder: string }) {
 		}
 
 		replace(`${pathname}?${params.toString()}`);
-	}, 200);
-
-	const buttonClass = `flex ml-[5px] my-auto h-[40px] grow text-center
-		items-center justify-center rounded-md p-3 text-sm font-medium
-		bg-gray-100 border-gray-300 border-2 hover:bg-gray-200 hover:border-gray-500 md:flex-none md:p-2 md:px-3 md:mx-[4px]`;
-
+	}, 50);
+	
 	return (
-		<div className="flex w-full ml-auto max-md:w-[500px] gap-5">
+		<div className="flex w-full max-md:w-[500px]">
 			<SearchInput placeholder={placeholder} />
-			<div className="flex w-full ml-auto max-md:w-[500px] gap-4">
-				<label htmlFor="items-per-page">Recipes Per Page: </label>
+			<div className="flex ml-2 w-full max-md:w-[280px]">
+				<label htmlFor="items-per-page" className="m-auto bg-gray-100 border-1 border-gray-300 p-1 mr-2 text-sm">Recipes Per Page: </label>
 				<input
 					id="items-per-page"
 					name="items-per-page"
@@ -41,7 +37,9 @@ export default function SearchBar({ placeholder }: { placeholder: string }) {
 						console.log(val);
 						setPageAmount(val.target.value);
 					}}
-					className="w-[40px] bg-red-400 rounded-md bg-gray-100 border-gray-300 border-2 hover:bg-gray-200 hover:border-gray-600 text-black py-[9px] text-center text-sm"
+					className="w-[40px] h-[50px] rounded-md
+						bg-gray-100 border-gray-300 border-2
+						hover:bg-gray-200 hover:border-gray-600 text-black py-[9px] text-center text-sm"
 					min={1}
 					max={50}
 				/>
