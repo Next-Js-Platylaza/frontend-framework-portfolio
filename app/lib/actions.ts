@@ -145,7 +145,17 @@ const RecipeFormSchema = z.object({
 		.string({ error: "Please enter a title." })
 		.min(2, { error: "Title must contain 2 or more characters" })
 		.max(55, { error: "Title must be 55 characters or shorter" }),
-	image: z.httpUrl({ error: "Please enter a valid url." }),
+	image: z.httpUrl({ error: "Please enter a valid url." }).refine(
+		(url) => {
+			// Regular expression to check for common image file extensions
+			const imageExtensions = /\.(jpg|jpeg|png|gif|webp|svg)$/i;
+			return imageExtensions.test(url);
+		},
+		{
+			message:
+				"URL must point to a valid image file (jpg, jpeg, png, gif, webp, svg).",
+		},
+	),
 	ingredients: z.array(z.string({ error: "Please input a valid password." })),
 	steps: z.array(z.string({ error: "Please input a valid password." })),
 	date: z.string(),
