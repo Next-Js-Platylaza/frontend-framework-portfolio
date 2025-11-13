@@ -76,9 +76,11 @@ export default function Pagination({
 			} else if (behindPages < idealCenter) { 
 				id = 1;
 			}
+			if (id <= 0) id = 1;
+
+			//console.log(`Max: ${maxPages}, Ahead: ${aheadPages}, Behind: ${behindPages}, Center: ${idealCenter}, Start: ${id}`);
 
 			for (let i = 1; i <= pagesCount; i++) {
-				if (id <= 0) continue;
 				if (i > maxPages || id > pagesCount) break;
 
 				pageIDs.push(id);

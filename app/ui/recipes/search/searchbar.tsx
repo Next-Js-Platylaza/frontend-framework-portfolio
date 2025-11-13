@@ -8,7 +8,7 @@ export default function SearchBar({ placeholder }: { placeholder: string }) {
 	const pathname = usePathname();
 	const { replace } = useRouter();
 
-	const setPageAmount = useDebouncedCallback((amount: string) => {
+	const setItemsPerPageAmount = useDebouncedCallback((amount: string) => {
 		const params = new URLSearchParams(searchParams);
 		params.set("page", searchParams.get("page") ?? "1");
 		params.set("items", amount);
@@ -32,10 +32,9 @@ export default function SearchBar({ placeholder }: { placeholder: string }) {
 					id="items-per-page"
 					name="items-per-page"
 					type="number"
-					defaultValue={3}
+					defaultValue={searchParams.get("items") ?? "5"}
 					onChange={(val) => {
-						console.log(val);
-						setPageAmount(val.target.value);
+						setItemsPerPageAmount(val.target.value);
 					}}
 					className="w-[40px] h-[50px] rounded-md
 						bg-gray-100 border-gray-300 border-2
