@@ -213,6 +213,14 @@ export default function EditRecipeForm({ recipe }: { recipe: Recipe }) {
 								>
 									{deleted ? "Exit Without Saving" : "Cancel"}
 								</Link>
+								{!deleted &&
+									<Link
+										href={`/recipes/${recipe.id}/view`}
+										className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 border-gray-400 border-2 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"
+									>
+										View
+									</Link>
+								}
 								<button
 									type="submit"
 									className="flex mt-auto h-10 items-center rounded-lg bg-gray-200 border-gray-400 border-2 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-300"

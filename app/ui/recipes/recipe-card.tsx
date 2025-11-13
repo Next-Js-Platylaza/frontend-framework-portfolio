@@ -15,13 +15,13 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
 					href={`/recipes/${recipe.id}/view`}
 					className="flex w-full"
 				>
-					<div className="w-[106px] h-[106px] border-gray-500 border-3 bg-gray-400 mr-4">
+					<div className="w-[106px] h-[106px] relative border-gray-500 border-3 bg-gray-400 items-center mr-4">
 						<Image
 							src={recipe.image}
 							alt="Recipe Thumbnail"
 							width={100}
 							height={100}
-							className="max-w-[100px] max-h-[100px] w-auto h-auto m-auto"
+							className="max-w-[100px] max-h-[100px] absolute inset-0 w-auto h-auto m-auto"
 						/>
 					</div>
 					<div className="mr-6 pl-4">

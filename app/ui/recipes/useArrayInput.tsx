@@ -1,6 +1,6 @@
 "use client";
 import { InputAttributes } from "@/app/lib/definitions";
-import { JSX, useEffect, useState } from "react";
+import { JSX, useEffect, useRef, useState } from "react";
 import { v1 as generateV1Uuid } from "uuid";
 
 type ComponentStyles = {
@@ -127,6 +127,12 @@ function ArrayInput({
 	attributes: InputAttributes;
 	removeComponent: (name: string) => void;
 }) {
+	const inputRef = useRef<HTMLInputElement>(null);
+
+	useEffect(()=>{
+		if (attributes.removable && (inputRef.current?.value == undefined || inputRef.current?.value.length < 1)) inputRef.current?.focus();
+	}, [])
+
 	return (
 		<div className="flex gap-7">
 			<label
@@ -134,6 +140,7 @@ function ArrayInput({
 				aria-label={`Input ${attributes.label}`}
 			/>
 			<input
+				ref={inputRef}
 				className={attributes?.inputStyles}
 				id={`${attributes.label}${attributes.id}`}
 				name={`${attributes.label}s`}

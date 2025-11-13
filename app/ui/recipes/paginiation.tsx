@@ -39,7 +39,7 @@ export default function Pagination({
 	}
 
 	// TSX Component for a page number
-	function PageNumberButton({ page, className }: { page: number, className: string | undefined }) {
+	function PageNumberButton({ page, className, text }: { page: number, className?: string, text: string }) {
 		const selectedClass =
 			"w-8 h-8 text-lg text-center bg-[#B6BCC5] border-gray-500 border-2";
 		const notSelectedClass =
@@ -52,7 +52,7 @@ export default function Pagination({
 					`${page == currentPage ? selectedClass : notSelectedClass} ${className}`
 				}
 			>
-				{page}
+				{text?.replace("N", `${page}`)}
 			</Link>
 		) as JSX.Element;
 	}
@@ -90,7 +90,10 @@ export default function Pagination({
 			}
 
 			pageIDs.forEach(id => {
-				newPageButtons.push(<PageNumberButton className="my-auto" key={id} page={id} />);
+				let text = "N";
+				if (id == pageIDs.at(0) && id > 1) text="..N";
+				else if (id == pageIDs.at(-1) && id < pagesCount) text="N..";
+				newPageButtons.push(<PageNumberButton className="my-auto" key={id} page={id} text={text}/>);
 			});
 
 			setPageButtons(newPageButtons);

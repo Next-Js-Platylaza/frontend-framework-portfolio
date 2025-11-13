@@ -96,6 +96,7 @@ export async function fetchRecipesPages(query: string, itemsPerPage: number) {
       			(title ILIKE ${`%${query}%`} OR
       			date::text ILIKE ${`%${query}%`})
 	  			AND user_id = ${userId}
+			ORDER BY edit_date DESC;
   		`;
 
 		return recipes;

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { createRecipe, RecipeFormState } from "@/app/lib/actions";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import useArrayInput from "./useArrayInput";
 import { formatDate } from "@/app/lib/util";
 
@@ -45,13 +45,18 @@ export default function CreateRecipeForm() {
 		inputMinMaxLength: [1, 100],
 	});
 
-	console.log(formatDate(new Date(), "y-mm-dd hh:ii:ss"));
+	//console.log(formatDate(new Date(), "y-mm-dd hh:ii:ss"));
 
 	// Refill inputs with their values after form submission (because form submission clears all inputs)
 	useEffect(() => {
 		refillInputs_Ingredients();
 		refillInputs_Steps();
 	}, [state.errors]);
+
+	const titleInputRef = useRef<HTMLInputElement>(null);
+	useEffect(()=>{
+		titleInputRef.current?.focus();
+	}, [])
 
 	return (
 		<form action={formAction}>
@@ -66,6 +71,7 @@ export default function CreateRecipeForm() {
 					</label>
 					<div className="relative">
 						<input
+							ref={titleInputRef}
 							id="title"
 							name="title"
 							type="text"
